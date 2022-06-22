@@ -1,0 +1,18 @@
+{
+    "name": "com.bludea.bluengine.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:22d48aca7014d4939af7ea34d84d3d4f",
+        "GUID:91767d6d0600e4a599ee68d42ad0634e",
+        "GUID:f8fbc6f2580d5451ead3dc765c688d35"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,19 @@
+{
+  "name": "com.bludea.bluengine",
+  "version": "0.0.1",
+  "displayName": "BluEngine",
+  "description": "Bludea BluEngine",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "licensesUrl": "",
+  "keywords": [],
+  "author": {
+    "name": "Gilberto Alexandre dos Santos",
+    "email": "gilberto.alexsantos@gmail.com",
+    "url": "https://github.com/gilbertoalexsantos"
+  },
+  "type": "library",
+  "samples": []
+}
