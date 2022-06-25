@@ -1,8 +1,11 @@
 using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "BluEngine/EditorAppInfo", fileName = "EditorAppInfo")]
-public class EditorAppInfo : ScriptableObject
+namespace BluEngine.Editor
 {
-    public SceneAsset StartScene;
+    [CreateAssetMenu(menuName = "BluEngine/EditorAppInfo", fileName = "EditorAppInfo")]
+    public class EditorAppInfo : ScriptableObject
+    {
+        public SceneAsset StartScene;
+    }
 }
