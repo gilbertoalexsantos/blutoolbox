@@ -29,7 +29,6 @@ namespace BluEngine.Editor
     {
         private string _path;
         private string _screenName;
-        private int _focused;
 
         public void SetPath(string path)
         {
