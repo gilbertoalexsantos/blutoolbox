@@ -1,0 +1,12 @@
+using Bludk;
+
+public class {screenControllerName} : ScreenController<{screenControllerName}, {screenName}>
+{
+    public {screenControllerName}(ScreenManager screenManager) : base(screenManager)
+    {
+    }
+
+    public override void Dispose()
+    {
+    }
+}
