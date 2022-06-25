@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Zenject;
 
 namespace Bludk
 {
@@ -8,9 +9,11 @@ namespace Bludk
     {
         private readonly IScreenManagerInfo _info;
         private readonly IScreenResolver _screenPrefabResolver;
+        private readonly DiContainer _container;
 
-        private Dictionary<Type, ScreenController> _controllers = new();
-        private Dictionary<Type, ScreenUI> _uis = new();
+        private readonly Dictionary<Type, ScreenController> _controllers = new();
+        private readonly Dictionary<Type, ScreenUI> _uis = new();
+        private readonly HashSet<Type> _shownControllers = new();
         private int _lastSortingOrder = -1;
 
         public int IncSortingOrder()
@@ -35,11 +38,13 @@ namespace Bludk
         public ScreenManager(
             IScreenManagerInfo info, 
             IScreenResolver screenPrefabResolver,
+            DiContainer container,
             IHardReloadManager hardReloadManager
         )
         {
             _info = info;
             _screenPrefabResolver = screenPrefabResolver;
+            _container = container;
             hardReloadManager.AddOnHardReload(this);
         }
 
@@ -50,18 +55,6 @@ namespace Bludk
                 controller.Dispose();
             }
             _controllers.Clear();
-        }
-
-        public TCONTROLLER GetLoadedController<TUI, TCONTROLLER>()
-            where TUI : ScreenUI
-            where TCONTROLLER : ScreenController
-        {
-            if (!IsShown<TUI, TCONTROLLER>())
-            {
-                throw new Exception($"UI {typeof(TUI)} is not shown");
-            }
-
-            return (TCONTROLLER) _controllers[typeof(TCONTROLLER)];
         }
 
         public IEnumerator CacheUI<TUI>() where TUI : ScreenUI
@@ -92,21 +85,65 @@ namespace Bludk
                 .Then(LoadUI<TUI>);
         }
 
+        public IEnumerator<TCONTROLLER> LoadController<TUI, TCONTROLLER>() 
+            where TUI : ScreenUI
+            where TCONTROLLER : ScreenController
+        {
+            Type controllerType = typeof(TCONTROLLER);
+            if (_controllers.ContainsKey(controllerType))
+            {
+                return ((TCONTROLLER) _controllers[controllerType]).Yield();
+            }
+
+            TCONTROLLER controller = _container.Instantiate<TCONTROLLER>();
+            _controllers[controllerType] = controller;
+            return LoadUI<TUI>()
+                .Then(ui =>
+                {
+                    controller.SetUI(ui);
+                    return controller.Yield(); 
+                });
+        }
+
+        public IEnumerator UnloadController<TUI, TCONTROLLER>()
+            where TUI : ScreenUI
+            where TCONTROLLER : ScreenController
+        {
+            Type uiType = typeof(TUI);
+            Type controllerType = typeof(TCONTROLLER);
+            if (!_uis.ContainsKey(uiType) || !_controllers.ContainsKey(controllerType))
+            {
+                return TxongaHelper.Empty();
+            }
+
+            TUI ui = (TUI)_uis[uiType];
+            TCONTROLLER controller = (TCONTROLLER)_controllers[controllerType];
+            controller.Dispose();
+
+            return _screenPrefabResolver.Unload(ui)
+                .Then(() =>
+                {
+                    _uis.Remove(uiType);
+                    _controllers.Remove(controllerType);
+                    _shownControllers.Remove(controllerType);
+                });
+        }
+
         public void SetupAfterShow<TCONTROLLER>(TCONTROLLER controller) where TCONTROLLER : ScreenController
         {
-            _controllers[typeof(TCONTROLLER)] = controller;
+            _shownControllers.Add(typeof(TCONTROLLER));
         }
 
         public void SetupAfterHide<TCONTROLLER>(TCONTROLLER controller) where TCONTROLLER : ScreenController
         {
-            _controllers.Remove(typeof(TCONTROLLER));
+            _shownControllers.Remove(typeof(TCONTROLLER));
         }
 
         public bool IsShown<TUI, TCONTROLLER>()
             where TUI : ScreenUI
             where TCONTROLLER : ScreenController
         {
-            return _uis.ContainsKey(typeof(TUI)) && _controllers.ContainsKey(typeof(TCONTROLLER));
+            return _shownControllers.Contains(typeof(TCONTROLLER));
         }
     }
 }

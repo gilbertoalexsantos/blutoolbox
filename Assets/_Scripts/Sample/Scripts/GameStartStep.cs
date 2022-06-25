@@ -8,28 +8,25 @@ using Zenject;
 public class GameStartStep : LoadingStep
 {
     private ScreenManager _screenManager;
-    private LoadingScreenController.Factory _loadingScreenFactory;
-    private MainScreenController.Factory _mainScreenControllerFactory;
 
     [Inject]
-    public void Construct(
-        LoadingScreenController.Factory loadingScreenFactory, 
-        MainScreenController.Factory mainScreenControllerFactory
-    )
+    public void Construct(ScreenManager screenManager)
     {
-        _loadingScreenFactory = loadingScreenFactory;
-        _mainScreenControllerFactory = mainScreenControllerFactory;
+        _screenManager = screenManager;
     }
 
     public override IEnumerator Execute()
     {
-        var loadingScreenController = _loadingScreenFactory.Create();
-        return loadingScreenController.Show()
-            .Then(() => AwaitConstants.WaitTwoSeconds)
-            .Then(() =>
+        return _screenManager.LoadController<LoadingScreen, LoadingScreenController>()
+            .Then(controller =>
             {
-                var mainScreenController = _mainScreenControllerFactory.Create();
-                return mainScreenController.CustomShow();
+                return controller.Show()
+                    .Then(() => AwaitConstants.WaitTwoSeconds)
+                    .Then(() =>
+                    {
+                        return _screenManager.LoadController<MainScreen, MainScreenController>()
+                            .Then(mainScreenController => mainScreenController.CustomShow());
+                    });
             });
     }
 }

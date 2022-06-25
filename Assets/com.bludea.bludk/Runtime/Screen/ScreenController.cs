@@ -31,7 +31,7 @@ namespace Bludk
 
         public IEnumerator Show()
         {
-            return Init()
+            return SetupOnBeforeShow()
                 .Then(PlayShowAnimation)
                 .Then(SetupAfterShow);
         }
@@ -42,15 +42,11 @@ namespace Bludk
                 .Then(SetupAfterHide);
         }
 
-        public IEnumerator Init()
+        public IEnumerator SetupOnBeforeShow()
         {
-            return _screenManager.LoadUI<TUI>()
-                .Then(ui =>
-                {
-                    SetUI(ui);
-                    UI.Canvas.overrideSorting = true;
-                    UI.Canvas.sortingOrder = _screenManager.IncSortingOrder();
-                });
+            UI.Canvas.overrideSorting = true;
+            UI.Canvas.sortingOrder = _screenManager.IncSortingOrder();
+            yield return null;
         }
 
         protected void SetupAfterShow()

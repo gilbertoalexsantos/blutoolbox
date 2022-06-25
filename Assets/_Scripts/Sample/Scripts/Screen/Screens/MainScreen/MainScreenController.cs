@@ -12,7 +12,7 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
 
     public IEnumerator CustomShow()
     {
-        return Init()
+        return SetupOnBeforeShow()
             .Then(Setup)
             .Then(PlayShowAnimation)
             .Then(SetupAfterShow);
@@ -49,10 +49,5 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
     public override void Dispose()
     {
         _token.Dispose();
-    }
-
-    public class Factory : PlaceholderFactory<MainScreenController>
-    {
-        
     }
 }

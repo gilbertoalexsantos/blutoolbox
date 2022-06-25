@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Bludk;
 
@@ -16,6 +17,12 @@ namespace BluEngine
         {
             TUI ui = _screenSceneRoot.transform.GetComponentInChildren<TUI>(true);
             return ui.Yield();
+        }
+
+        public IEnumerator Unload<TUI>(TUI ui) where TUI : ScreenUI
+        {
+            ui.gameObject.SetActive(false);
+            return TxongaHelper.Empty();
         }
     }
 }

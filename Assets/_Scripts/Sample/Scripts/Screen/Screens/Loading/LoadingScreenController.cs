@@ -10,7 +10,7 @@ public class LoadingScreenController : ScreenController<LoadingScreenController,
 
     public IEnumerator CustomShow(int secondsToHide)
     {
-        return Init()
+        return SetupOnBeforeShow()
             .Then(PlayShowAnimation)
             .Then(SetupAfterShow)
             .Then(() => AwaitConstants.WithSeconds(secondsToHide))
@@ -19,10 +19,5 @@ public class LoadingScreenController : ScreenController<LoadingScreenController,
 
     public override void Dispose()
     {
-    }
-
-    public class Factory : PlaceholderFactory<LoadingScreenController>
-    {
-        
     }
 }
