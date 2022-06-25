@@ -1,5 +1,6 @@
 using Bludk;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace BluEngine
@@ -39,10 +40,14 @@ namespace BluEngine
                 installer.InstallBindings(Container);
             }
 
-            var sceneInstallers = FindObjectsOfType<AppStartCustomSceneInstaller>();
-            foreach (AppStartCustomSceneInstaller installer in sceneInstallers)
+            Scene activeScene = SceneManager.GetActiveScene();
+            GameObject[] roots = activeScene.GetRootGameObjects();
+            foreach (GameObject root in roots)
             {
-                installer.InstallBindings(Container);
+                foreach (AppStartCustomSceneInstaller installer in root.GetComponentsInChildren<AppStartCustomSceneInstaller>(true))
+                {
+                    installer.InstallBindings(Container);
+                }
             }
         }
     }
