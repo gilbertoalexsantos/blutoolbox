@@ -8,5 +8,7 @@ namespace Bludk
         void RemoveOnUpdate(Action action);
         void AddOnLateUpdate(Action action);
         void RemoveOnLateUpdate(Action action);
+        void AddOnFixedUpdate(Action action);
+        void RemoveOnFixedUpdate(Action action);
     }
 }

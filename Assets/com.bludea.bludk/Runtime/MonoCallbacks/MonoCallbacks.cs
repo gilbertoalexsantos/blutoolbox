@@ -10,6 +10,7 @@ namespace Bludk
 
         private Action onUpdate;
         private Action onLateUpdate;
+        private Action onFixedUpdate;
 
         [Inject]
         public void Constructor(IHardReloadManager hardReloadManager)
@@ -32,6 +33,11 @@ namespace Bludk
             onLateUpdate?.Invoke();
         }
 
+        private void FixedUpdate()
+        {
+            onFixedUpdate?.Invoke();
+        }
+
         public void AddOnUpdate(Action action)
         {
             onUpdate += action;
@@ -52,6 +58,16 @@ namespace Bludk
             onLateUpdate -= action;
         }
 
+        public void AddOnFixedUpdate(Action action)
+        {
+            onFixedUpdate += action;
+        }
+
+        public void RemoveOnFixedUpdate(Action action)
+        {
+            onFixedUpdate -= action;
+        }
+
         public void OnHardReload()
         {
             Dispose();
@@ -61,6 +77,7 @@ namespace Bludk
         {
             onUpdate = null;
             onLateUpdate = null;
+            onFixedUpdate = null;
         }
     }
 }
