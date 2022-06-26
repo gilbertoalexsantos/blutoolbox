@@ -128,6 +128,37 @@ namespace Bludk.Tests
             Assert.AreEqual(false, afterCancel);
         }
 
+        [UnityTest]
+        public IEnumerator TestInnerIEnumerator()
+        {
+            var now = DateTime.Now;
+            float duration = 2f;
+            yield return InnerIEnumerator1(duration)
+                .StartAndAwait();
+            var totalSeconds = (DateTime.Now - now).TotalSeconds;
+            Assert.AreEqual(duration, totalSeconds, DELTA);
+        }
+
+        private IEnumerator InnerIEnumerator1(float totalSeconds)
+        {
+            float t = totalSeconds / 3f;
+            yield return AwaitConstants.WithSeconds(t);
+            yield return InnerEnumerator2((t));
+            yield return AwaitConstants.WithSeconds(t);
+        }
+
+        private IEnumerator InnerEnumerator2(float seconds)
+        {
+            float t = seconds / 2f;
+            yield return InnerEnumerator3(t);
+            yield return AwaitConstants.WithSeconds(t);
+        }
+
+        private IEnumerator InnerEnumerator3(float seconds)
+        {
+            yield return AwaitConstants.WithSeconds(seconds);
+        }
+
         private IEnumerator<int> YieldValue(int value)
         {
             yield return -1;
