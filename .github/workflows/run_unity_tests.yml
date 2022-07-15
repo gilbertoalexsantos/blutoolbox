@@ -1,5 +1,11 @@
 name: Run Unity Tests
-on: push
+on: 
+  workflow_dispatch:
+    inputs:
+      projectPath:
+        description: 'Project path'
+        required: true
+        type: string
 env:
   UNITY_EMAIL: gilberto.alexsantos@gmail.com
 jobs:
@@ -19,5 +25,5 @@ jobs:
           UNITY_PASSWORD: ${{secrets.UNITY_PASSWORD}}
           UNITY_SERIAL: ${{secrets.UNITY_SERIAL}}
         with:
-          projectPath: ${{github.workspace}}
+          projectPath: ${{inputs.projectPath}}
           githubToken: ${{secrets.GITHUB_TOKEN}}
