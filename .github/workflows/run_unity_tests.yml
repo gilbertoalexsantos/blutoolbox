@@ -1,0 +1,23 @@
+name: Run Unity Tests
+on: push
+env:
+  UNITY_EMAIL: gilberto.alexsantos@gmail.com
+jobs:
+  runUnityTest:
+    name: Run Unity Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-Ubuntu-Tests
+          restore-keys: Library-
+      - uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_EMAIL: ${{secrets.UNITY_EMAIL}}
+          UNITY_PASSWORD: ${{secrets.UNITY_PASSWORD}}
+          UNITY_SERIAL: ${{secrets.UNITY_SERIAL}}
+        with:
+          projectPath: ${{github.workspace}}
+          githubToken: ${{secrets.GITHUB_TOKEN}}
