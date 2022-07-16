@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Bludk
 {
-    public class BluBehaviour : MonoBehaviour
+    public abstract class BluBehaviour : MonoBehaviour
     {
         private readonly Dictionary<Type, object> _cachedComponents = new();
 
