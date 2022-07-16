@@ -1,13 +1,15 @@
 using System.Collections;
 using Bludk;
-using Zenject;
 
 public class MainScreenController : ScreenController<MainScreenController, MainScreen>
 {
-    private CancelToken _token = new();
+    private readonly CancelToken _token = new();
 
-    public MainScreenController(ScreenManager screenManager) : base(screenManager)
+    private readonly DebugManager _debugManager;
+
+    public MainScreenController(ScreenManager screenManager, DebugManager debugManager) : base(screenManager)
     {
+        _debugManager = debugManager;
     }
 
     public IEnumerator CustomShow()
@@ -42,6 +44,7 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
     private IEnumerator OnBtn2Click()
     {
         UnityEngine.Debug.LogError("OnBtn2Clicked!");
+        _debugManager.Bark();
         _token.Cancel();
         yield return null;
     }

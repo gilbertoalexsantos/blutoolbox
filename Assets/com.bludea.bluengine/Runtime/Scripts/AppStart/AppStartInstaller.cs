@@ -1,3 +1,4 @@
+using System;
 using Bludk;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,6 +31,7 @@ namespace BluEngine
             Container.Bind<ScreenSceneRoot>().FromInstance(screenSceneRoot);
 
             BindCustomInstallers();
+            BindSceneAutoBinders();
         }
 
         private void BindCustomInstallers()
@@ -52,6 +54,20 @@ namespace BluEngine
                 foreach (AppStartCustomSceneInstaller installer in root.GetComponentsInChildren<AppStartCustomSceneInstaller>(true))
                 {
                     installer.InstallBindings(Container);
+                }
+            }
+        }
+
+        private void BindSceneAutoBinders()
+        {
+            Scene activeScene = SceneManager.GetActiveScene();
+            GameObject[] roots = activeScene.GetRootGameObjects();
+            foreach (GameObject root in roots)
+            {
+                foreach (var obj in root.GetComponentsInChildren<ISceneAutoBinder>(true))
+                {
+                    Type type = obj.GetType();
+                    Container.Bind(type).FromInstance(obj);
                 }
             }
         }

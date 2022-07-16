@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: GameSettings
   m_EditorClassIdentifier: 
   BuildInfoResourcesPath: BluEngine/buildInfo
-  CustomInstallersResourcesFolders: []
-  LoadingStepsResourcesFolders: []
+  CustomInstallersResourcesFolders:
+  - Game/CustomInstallers
+  LoadingStepsResourcesFolders:
+  - Game/LoadingSteps
