@@ -34,10 +34,15 @@ namespace BluEngine
 
         private void BindCustomInstallers()
         {
-            var scriptableInstallers = Resources.LoadAll<AppStartCustomScriptableInstaller>("Game/CustomInstallers");
-            foreach (AppStartCustomScriptableInstaller installer in scriptableInstallers)
+            GameSettings gameSettings = Resources.Load<GameSettings>(GameSettings.ResourcesPath);
+
+            foreach (string resourcesFolder in gameSettings.CustomInstallersResourcesFolders)
             {
-                installer.InstallBindings(Container);
+                var scriptableInstallers = Resources.LoadAll<AppStartCustomScriptableInstaller>(resourcesFolder);
+                foreach (AppStartCustomScriptableInstaller installer in scriptableInstallers)
+                {
+                    installer.InstallBindings(Container);
+                }   
             }
 
             Scene activeScene = SceneManager.GetActiveScene();

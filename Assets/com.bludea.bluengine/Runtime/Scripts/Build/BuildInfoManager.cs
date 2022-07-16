@@ -29,7 +29,8 @@ namespace BluEngine
 
         private void LoadBuildInfoData()
         {
-            TextAsset buildInfoTextAsset = Resources.Load<TextAsset>("BluEngine/buildInfo");
+            GameSettings gameSettings = Resources.Load<GameSettings>(GameSettings.ResourcesPath);
+            TextAsset buildInfoTextAsset = Resources.Load<TextAsset>(gameSettings.BuildInfoResourcesPath);
             _buildInfoData = _serializer.Deserialize<BuildInfoData>(buildInfoTextAsset.text);
         }
     }

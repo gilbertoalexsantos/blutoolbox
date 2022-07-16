@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c1ed6dfd012407cbf842816f0551554, type: 3}
-  m_Name: EditorAppInfo
+  m_Script: {fileID: 11500000, guid: 794de10653284a4bbb164e80df50d693, type: 3}
+  m_Name: GameSettings
   m_EditorClassIdentifier: 
-  StartScene: {fileID: 102900000, guid: 5eea02a3acfcf41f3b75aebf43974922, type: 3}
+  BuildInfoResourcesPath: BluEngine/buildInfo
+  CustomInstallersResourcesFolders: []
+  LoadingStepsResourcesFolders: []

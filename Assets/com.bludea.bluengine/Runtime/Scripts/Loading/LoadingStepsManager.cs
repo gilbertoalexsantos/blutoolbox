@@ -128,7 +128,15 @@ namespace BluEngine
 
         private List<LoadingStep> LoadSteps()
         {
-            return Resources.LoadAll<LoadingStep>("Game/LoadingSteps").ToList();
+            GameSettings gameSettings = Resources.Load<GameSettings>(GameSettings.ResourcesPath);
+
+            List<LoadingStep> loadingSteps = new List<LoadingStep>();
+            foreach (string resourcesFolder in gameSettings.LoadingStepsResourcesFolders)
+            {
+                loadingSteps.AddRange(Resources.LoadAll<LoadingStep>(resourcesFolder));
+            }
+
+            return loadingSteps;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace BluEngine.Editor
         [MenuItem("Blu/Start %g")]
         public static void StartGame()
         {
-            SceneAsset sceneAsset = Resources.Load<EditorAppInfo>("Game/General/EditorAppInfo").StartScene;
+            SceneAsset sceneAsset = Resources.Load<EditorSettings>(EditorSettings.ResourcesPath).StartScene;
             EditorSceneManager.playModeStartScene = sceneAsset;
             EditorApplication.isPlaying = true;
         }
