@@ -16,6 +16,7 @@ namespace BluEngine
 
         public override void InstallBindings()
         {
+            Container.Bind<IDeviceIdProvider>().To<UnityDeviceIdProvider>().AsSingle();
             Container.Bind<IClock>().To<UnityClock>().AsSingle();
             Container.Bind<IHardReloadManager>().To<HardReloadManager>().AsSingle();
             Container.Bind<IScheduler>().To<Scheduler>().AsSingle();

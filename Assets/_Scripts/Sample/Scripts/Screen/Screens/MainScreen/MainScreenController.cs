@@ -6,10 +6,15 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
     private readonly CancelToken _token = new();
 
     private readonly DebugManager _debugManager;
+    private readonly IDeviceIdProvider _deviceIdProvider;
 
-    public MainScreenController(ScreenManager screenManager, DebugManager debugManager) : base(screenManager)
+    public MainScreenController(
+        ScreenManager screenManager, 
+        DebugManager debugManager,
+        IDeviceIdProvider deviceIdProvider) : base(screenManager)
     {
         _debugManager = debugManager;
+        _deviceIdProvider = deviceIdProvider;
     }
 
     public IEnumerator CustomShow()
@@ -24,6 +29,7 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
     {
         UI.Btn1.SetOnClickRoutine(OnBtn1Click, _token);
         UI.Btn2.SetOnClickRoutine(OnBtn2Click, _token);
+        UI.DeviceIdText.text = _deviceIdProvider.DeviceId;
     }
 
     private IEnumerator OnBtn1Click()
