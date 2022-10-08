@@ -10,6 +10,12 @@ namespace Bludk.Tests
         {
             Maybe<int> fooM = Maybe.Some(5);
             Assert.AreEqual(5, fooM.Value);
+
+            fooM = 5.Some();
+            Assert.AreEqual(5, fooM.Value);
+
+            fooM = fooM.Some();
+            Assert.AreEqual(5, fooM.Value);
         }
 
         [Test]
@@ -40,10 +46,18 @@ namespace Bludk.Tests
             Assert.IsTrue(m4 <= otherM4);
 
             Maybe<int> none = Maybe.None<int>();
-            Maybe<int> none2 = Maybe.None<int>();
             Assert.IsFalse(m4 == none);
             Assert.IsTrue(m4 != none);
 
+            none = 5.None();
+            Assert.IsFalse(m4 == none);
+            Assert.IsTrue(m4 != none);
+
+            none = m4.None();
+            Assert.IsFalse(m4 == none);
+            Assert.IsTrue(m4 != none);
+
+            Maybe<int> none2 = 6.None();
             Assert.IsTrue(none == none2);
             Assert.IsFalse(none != none2);
         }
