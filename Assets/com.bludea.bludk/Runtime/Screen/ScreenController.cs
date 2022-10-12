@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Zenject;
 
 namespace Bludk
 {
@@ -42,7 +41,7 @@ namespace Bludk
                 .Then(SetupAfterHide);
         }
 
-        public IEnumerator SetupOnBeforeShow()
+        protected IEnumerator SetupOnBeforeShow()
         {
             UI.Canvas.overrideSorting = true;
             UI.Canvas.sortingOrder = _screenManager.IncSortingOrder();
