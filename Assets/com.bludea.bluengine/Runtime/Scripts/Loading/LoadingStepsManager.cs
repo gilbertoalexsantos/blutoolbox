@@ -32,7 +32,7 @@ namespace BluEngine
                 return null;
             }
 
-            IEnumerator head = TxongaHelper.Empty();
+            IEnumerator head = TxongaHelper.Empty;
             for (int i = 0; i < steps.Count; i++)
             {
                 int idx = i;

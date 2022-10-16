@@ -10,7 +10,7 @@ public class LoadingScreenController : ScreenController<LoadingScreenController,
 
     public IEnumerator CustomShow(int secondsToHide)
     {
-        return SetupOnBeforeShow()
+        return SetupBeforeShow()
             .Then(PlayShowAnimation)
             .Then(SetupAfterShow)
             .Then(() => AwaitConstants.WithSeconds(secondsToHide))

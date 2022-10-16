@@ -22,7 +22,7 @@ namespace BluEngine
         public IEnumerator Unload<TUI>(TUI ui) where TUI : ScreenUI
         {
             ui.gameObject.SetActive(false);
-            return TxongaHelper.Empty();
+            return TxongaHelper.Empty;
         }
     }
 }

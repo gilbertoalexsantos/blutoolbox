@@ -19,7 +19,7 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
 
     public IEnumerator CustomShow()
     {
-        return SetupOnBeforeShow()
+        return SetupBeforeShow()
             .Then(Setup)
             .Then(PlayShowAnimation)
             .Then(SetupAfterShow);
@@ -52,7 +52,7 @@ public class MainScreenController : ScreenController<MainScreenController, MainS
         UnityEngine.Debug.LogError("OnBtn2Clicked!");
         _debugManager.Bark();
         _token.Cancel();
-        yield return null;
+        return TxongaHelper.Empty;
     }
 
     public override void Dispose()

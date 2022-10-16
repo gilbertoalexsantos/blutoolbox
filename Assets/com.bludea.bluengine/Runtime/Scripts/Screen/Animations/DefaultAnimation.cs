@@ -10,13 +10,13 @@ namespace BluEngine
         public override IEnumerator ShowAnimation(ScreenController controller)
         {
             controller.BaseUI.gameObject.SetActive(true);
-            return TxongaHelper.Empty();
+            return TxongaHelper.Empty;
         }
 
         public override IEnumerator HideAnimation(ScreenController controller)
         {
             controller.BaseUI.gameObject.SetActive(false);
-            return TxongaHelper.Empty();
+            return TxongaHelper.Empty;
         }
     }
 }

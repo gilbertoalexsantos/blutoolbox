@@ -30,32 +30,40 @@ namespace Bludk
 
         public IEnumerator Show()
         {
-            return SetupOnBeforeShow()
+            return SetupBeforeShow()
                 .Then(PlayShowAnimation)
                 .Then(SetupAfterShow);
         }
 
         public IEnumerator Hide()
         {
-            return PlayHideAnimation()
+            return SetupBeforeHide()
+                .Then(PlayHideAnimation)
                 .Then(SetupAfterHide);
         }
 
-        protected IEnumerator SetupOnBeforeShow()
+        protected IEnumerator SetupBeforeShow()
         {
             UI.Canvas.overrideSorting = true;
             UI.Canvas.sortingOrder = _screenManager.IncSortingOrder();
-            yield return null;
+            return TxongaHelper.Empty;
         }
 
-        protected void SetupAfterShow()
+        protected IEnumerator SetupAfterShow()
         {
             _screenManager.SetupAfterShow(this);
+            return TxongaHelper.Empty;
         }
 
-        protected void SetupAfterHide()
+        protected IEnumerator SetupBeforeHide()
+        {
+            return TxongaHelper.Empty;
+        }
+
+        protected IEnumerator SetupAfterHide()
         {
             _screenManager.SetupAfterHide(this);
+            return TxongaHelper.Empty;
         }
 
         protected IEnumerator PlayShowAnimation()

@@ -6,17 +6,10 @@ namespace Bludk
     internal class EmptyEnumerator : IEnumerator
     {
         public object Current => null;
-        private bool _moved;
 
         public bool MoveNext()
         {
-            if (_moved)
-            {
-                return false;
-            }
-
-            _moved = true;
-            return true;
+            return false;
         }
 
         public void Reset()

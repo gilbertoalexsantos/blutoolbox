@@ -57,12 +57,12 @@ namespace Bludk
             _controllers.Clear();
         }
 
-        public IEnumerator CacheUI<TUI>() where TUI : ScreenUI
+        public IEnumerator Preload<TUI>() where TUI : ScreenUI
         {
             Type key = typeof(TUI);
             if (_uis.ContainsKey(key))
             {
-                return TxongaHelper.Empty();
+                return TxongaHelper.Empty;
             }
 
             return _screenPrefabResolver.Load<TUI>()
@@ -73,7 +73,7 @@ namespace Bludk
                 });
         }
 
-        public IEnumerator<TUI> LoadUI<TUI>() where TUI : ScreenUI
+        private IEnumerator<TUI> LoadUI<TUI>() where TUI : ScreenUI
         {
             Type key = typeof(TUI);
             if (_uis.ContainsKey(key))
@@ -81,11 +81,11 @@ namespace Bludk
                 return ((TUI) _uis[key]).Yield();
             }
 
-            return CacheUI<TUI>()
+            return Preload<TUI>()
                 .Then(LoadUI<TUI>);
         }
 
-        public IEnumerator<TCONTROLLER> LoadController<TUI, TCONTROLLER>() 
+        public IEnumerator<TCONTROLLER> Load<TUI, TCONTROLLER>() 
             where TUI : ScreenUI
             where TCONTROLLER : ScreenController
         {
@@ -105,7 +105,7 @@ namespace Bludk
                 });
         }
 
-        public IEnumerator UnloadController<TUI, TCONTROLLER>()
+        public IEnumerator Unload<TUI, TCONTROLLER>()
             where TUI : ScreenUI
             where TCONTROLLER : ScreenController
         {
@@ -113,7 +113,7 @@ namespace Bludk
             Type controllerType = typeof(TCONTROLLER);
             if (!_uis.ContainsKey(uiType) || !_controllers.ContainsKey(controllerType))
             {
-                return TxongaHelper.Empty();
+                return TxongaHelper.Empty;
             }
 
             TUI ui = (TUI)_uis[uiType];

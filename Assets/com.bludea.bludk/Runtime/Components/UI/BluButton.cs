@@ -1,16 +1,12 @@
 using System;
 using System.Collections;
-using Bludk;
-using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
-namespace BluEngine
+namespace Bludk
 {
     public class BluButton : BluBehaviour
     {
         private Button Btn => GetCached<Button>();
-        private TextMeshProUGUI Tmp => GetCached<TextMeshProUGUI>();
 
         private Func<IEnumerator> _routineCb;
         private Action _simpleCb;
@@ -35,19 +31,9 @@ namespace BluEngine
             Btn.onClick.AddListener(OnBtnClicked);
         }
 
-        public void SetText(string text)
-        {
-            Tmp.SetText(text);
-        }
-
         public void SetInteractable(bool interactable)
         {
             Btn.interactable = interactable;
-        }
-
-        public void SetColor(Color color)
-        {
-            Btn.image.color = color;
         }
 
         private void OnBtnClicked()

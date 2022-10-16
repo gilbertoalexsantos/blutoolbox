@@ -17,14 +17,14 @@ public class GameStartStep : LoadingStep
 
     public override IEnumerator Execute()
     {
-        return _screenManager.LoadController<LoadingScreen, LoadingScreenController>()
+        return _screenManager.Load<LoadingScreen, LoadingScreenController>()
             .Then(controller =>
             {
                 return controller.Show()
                     .Then(() => AwaitConstants.WaitTwoSeconds)
                     .Then(() =>
                     {
-                        return _screenManager.LoadController<MainScreen, MainScreenController>()
+                        return _screenManager.Load<MainScreen, MainScreenController>()
                             .Then(mainScreenController => mainScreenController.CustomShow());
                     });
             });

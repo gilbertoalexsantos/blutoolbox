@@ -8,7 +8,11 @@ namespace BluEngine
     {
         public static readonly string ResourcesPath = "BluEngine/GameSettings";
 
+        [Header("Where your buildInfo is stored in Resources")]
         public string BuildInfoResourcesPath = "BluEngine/buildInfo";
+
+        [Space(20)]
+
         public List<string> CustomInstallersResourcesFolders;
         public List<string> LoadingStepsResourcesFolders;
     }
