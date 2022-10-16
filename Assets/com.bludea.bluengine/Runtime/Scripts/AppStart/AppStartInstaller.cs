@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Bludk;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -31,8 +32,14 @@ namespace BluEngine
             Container.Bind<IMonoCallbacks>().FromInstance(_monoCallbacks);
             Container.Bind<ScreenSceneRoot>().FromInstance(screenSceneRoot);
 
+            BindDatasources();
             BindCustomInstallers();
             BindSceneAutoBinders();
+        }
+
+        private void BindDatasources()
+        {
+            Container.Bind<IAsyncDatasource<IEnumerable<LoadingStep>>>().To<LoadingStepsDatasource>().AsSingle();
         }
 
         private void BindCustomInstallers()

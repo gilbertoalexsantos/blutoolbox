@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bludk;
-using UnityEngine;
 using Zenject;
 
 namespace BluEngine
@@ -18,14 +17,37 @@ namespace BluEngine
         }
 
         private readonly DiContainer _injector;
+        private List<LoadingStep> _steps;
+        private bool _initialized;
 
         public LoadingStepsManager(DiContainer injector)
         {
             _injector = injector;
         }
 
+        public void Init(IEnumerable<LoadingStep> steps)
+        {
+            if (_initialized)
+            {
+                throw new Exception("LoadingStepsManager already initialized");
+            }
+
+            if (steps == null)
+            {
+                throw new ArgumentException($"parameter {nameof(steps)} is null");
+            }
+
+            _initialized = true;
+            _steps = new List<LoadingStep>(steps);
+        }
+
         public IEnumerator Execute()
         {
+            if (!_initialized)
+            {
+                throw new Exception("LoadingStepsManager is not initialized");
+            }
+
             List<List<LoadingStep>> steps = LoadStepsInExecutionOrder();
             if (steps.Count == 0)
             {
@@ -48,18 +70,17 @@ namespace BluEngine
 
         private List<List<LoadingStep>> LoadStepsInExecutionOrder()
         {
-            List<LoadingStep> steps = LoadSteps();
-            if (steps.Count == 0)
+            if (_steps.Count == 0)
             {
                 return new List<List<LoadingStep>>();
             }
 
             Dictionary<LoadingStep, int> stepsIdx = new();
             List<Node> nodes = new List<Node>();
-            for (int i = 0; i < steps.Count; i++)
+            for (int i = 0; i < _steps.Count; i++)
             {
-                nodes.Add(new Node {Step = steps[i]});
-                stepsIdx[steps[i]] = i;
+                nodes.Add(new Node {Step = _steps[i]});
+                stepsIdx[_steps[i]] = i;
             }
 
             foreach (Node u in nodes)
@@ -124,19 +145,6 @@ namespace BluEngine
             }
 
             return result;
-        }
-
-        private List<LoadingStep> LoadSteps()
-        {
-            GameSettings gameSettings = Resources.Load<GameSettings>(GameSettings.ResourcesPath);
-
-            List<LoadingStep> loadingSteps = new List<LoadingStep>();
-            foreach (string resourcesFolder in gameSettings.LoadingStepsResourcesFolders)
-            {
-                loadingSteps.AddRange(Resources.LoadAll<LoadingStep>(resourcesFolder));
-            }
-
-            return loadingSteps;
         }
     }
 }
