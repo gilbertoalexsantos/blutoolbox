@@ -57,21 +57,28 @@ namespace Bludk.Editor
             try
             {
                 File.WriteAllText(tmpFilePath, shFileContentBuilder.ToString());
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = "/bin/bash";
-                psi.Arguments = tmpFilePath;
-                psi.UseShellExecute = false;
-                psi.RedirectStandardInput = true;
-                psi.RedirectStandardOutput = true;
-                psi.RedirectStandardError = true;
-                psi.CreateNoWindow = true;
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = tmpFilePath,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
 
                 using Process process = Process.Start(psi);
+                if (process == null)
+                {
+                    throw new NullReferenceException("Process is null");
+                }
+
                 process.WaitForExit();
                 string output = process.StandardError.ReadToEnd();
                 if (process.ExitCode != 0)
                 {
-                    throw new Exception($"Failed to execute command: \n'{command}'\n\nError: \n{output}");
+                    throw new Exception($"Failed to execute command\nCommand: '{command}'\nError: \n{output}");
                 }
             }
             finally

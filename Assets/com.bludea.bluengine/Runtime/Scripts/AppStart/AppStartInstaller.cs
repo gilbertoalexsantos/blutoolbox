@@ -28,42 +28,19 @@ namespace BluEngine
             Container.Bind<ScreenManager>().AsSingle();
             Container.Bind<IScreenManagerInfo>().To<ScreenManagerInfo>().AsSingle();
             Container.Bind<IScreenResolver>().To<SceneScreenResolver>().AsSingle();
+            Container.Bind<AssetManager>().AsSingle();
 
             Container.Bind<IMonoCallbacks>().FromInstance(_monoCallbacks);
             Container.Bind<ScreenSceneRoot>().FromInstance(screenSceneRoot);
 
             BindDatasources();
-            BindCustomInstallers();
             BindSceneAutoBinders();
         }
 
         private void BindDatasources()
         {
             Container.Bind<IAsyncDatasource<IEnumerable<LoadingStep>>>().To<LoadingStepsDatasource>().AsSingle();
-        }
-
-        private void BindCustomInstallers()
-        {
-            GameSettings gameSettings = Resources.Load<GameSettings>(GameSettings.ResourcesPath);
-
-            foreach (string resourcesFolder in gameSettings.CustomInstallersResourcesFolders)
-            {
-                var scriptableInstallers = Resources.LoadAll<AppStartCustomScriptableInstaller>(resourcesFolder);
-                foreach (AppStartCustomScriptableInstaller installer in scriptableInstallers)
-                {
-                    installer.InstallBindings(Container);
-                }   
-            }
-
-            Scene activeScene = SceneManager.GetActiveScene();
-            GameObject[] roots = activeScene.GetRootGameObjects();
-            foreach (GameObject root in roots)
-            {
-                foreach (AppStartCustomSceneInstaller installer in root.GetComponentsInChildren<AppStartCustomSceneInstaller>(true))
-                {
-                    installer.InstallBindings(Container);
-                }
-            }
+            Container.Bind<ISyncDatasource<GameSettings>>().To<GameSettingsDatasource>().AsSingle();
         }
 
         private void BindSceneAutoBinders()

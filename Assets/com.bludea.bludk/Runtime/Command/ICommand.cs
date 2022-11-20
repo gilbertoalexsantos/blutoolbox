@@ -5,7 +5,7 @@ namespace Bludk
         void Execute();
     }
 
-    public interface ICommand<T>
+    public interface ICommand<out T>
     {
         T Execute();
     }

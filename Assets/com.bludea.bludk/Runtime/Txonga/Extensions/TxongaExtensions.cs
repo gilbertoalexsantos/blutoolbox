@@ -20,6 +20,11 @@ namespace Bludk
             });
         }
 
+        public static IEnumerator<Tout> Then<Tout>(this IEnumerator parent, Func<Tout> nextFn)
+        {
+            return new Txonga<object, Tout>(parent, _ => nextFn().ToEnumerator());
+        }
+
         public static IEnumerator Then(this IEnumerator parent, Func<IEnumerator> nextFn)
         {
             return new Txonga<object, object>(parent, _ => nextFn());

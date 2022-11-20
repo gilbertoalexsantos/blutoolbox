@@ -6,12 +6,17 @@ namespace BluEngine
     public class BuildInfoManager
     {
         private readonly ISerializer _serializer;
+        private readonly ISyncDatasource<GameSettings> _gameSettingsDatasource;
 
         private BuildInfoData _buildInfoData;
-        
-        public BuildInfoManager(ISerializer serializer)
+
+        public BuildInfoManager(
+            ISerializer serializer,
+            ISyncDatasource<GameSettings> gameSettingsDatasource
+        )
         {
             _serializer = serializer;
+            _gameSettingsDatasource = gameSettingsDatasource;
         }
 
         public BuildInfoData BuildInfoData
@@ -29,7 +34,7 @@ namespace BluEngine
 
         private void LoadBuildInfoData()
         {
-            GameSettings gameSettings = Resources.Load<GameSettings>(GameSettings.ResourcesPath);
+            GameSettings gameSettings = _gameSettingsDatasource.LoadSync();
             TextAsset buildInfoTextAsset = Resources.Load<TextAsset>(gameSettings.BuildInfoResourcesPath);
             _buildInfoData = _serializer.Deserialize<BuildInfoData>(buildInfoTextAsset.text);
         }

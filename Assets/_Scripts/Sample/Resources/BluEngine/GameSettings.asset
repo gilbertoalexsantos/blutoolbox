@@ -12,8 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 794de10653284a4bbb164e80df50d693, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  BuildInfoResourcesPath: BluEngine/buildInfo
-  CustomInstallersResourcesFolders:
-  - Game/CustomInstallers
-  LoadingStepsResourcesFolders:
-  - Game/LoadingSteps
+  BuildInfoResourcesPath: buildInfo

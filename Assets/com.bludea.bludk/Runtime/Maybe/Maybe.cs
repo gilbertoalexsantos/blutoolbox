@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bludk
 {
-    public struct Maybe<T> : IEquatable<Maybe<T>>, IComparable<Maybe<T>>
+    public readonly struct Maybe<T> : IEquatable<Maybe<T>>, IComparable<Maybe<T>>
     {
         private readonly T _value;
         private readonly bool _hasValue;
@@ -46,7 +46,7 @@ namespace Bludk
 
         public override bool Equals(object obj)
         {
-            return obj is Maybe<T> ? Equals((Maybe<T>)obj) : false;
+            return obj is Maybe<T> maybe && Equals(maybe);
         }
 
         public override int GetHashCode()
