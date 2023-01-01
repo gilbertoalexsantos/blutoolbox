@@ -5,7 +5,7 @@ namespace Bludk
 {
     public static class ListExtensions
     {
-        private static readonly Random _random = new Random();
+        private static readonly Random _random = new();
 
         public static void Shuffle<T>(this List<T> l)
         {

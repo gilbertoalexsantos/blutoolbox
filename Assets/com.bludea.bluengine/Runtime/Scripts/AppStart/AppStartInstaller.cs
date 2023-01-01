@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bludk;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace BluEngine
@@ -10,7 +11,7 @@ namespace BluEngine
     public class AppStartInstaller : MonoInstaller
     {
         [SerializeField]
-        private MonoCallbacks _monoCallbacks;
+        private UnityMonoCallbacks unityMonoCallbacks;
 
         [SerializeField]
         private ScreenSceneRoot screenSceneRoot;
@@ -21,16 +22,16 @@ namespace BluEngine
             Container.Bind<IClock>().To<UnityClock>().AsSingle();
             Container.Bind<IHardReloadManager>().To<HardReloadManager>().AsSingle();
             Container.Bind<IScheduler>().To<Scheduler>().AsSingle();
-            Container.Bind<IPrefs>().To<Prefs>().AsSingle();
+            Container.Bind<IPrefs>().To<UnityPrefs>().AsSingle();
             Container.Bind<ISerializer>().To<JsonNetSerializer>().AsSingle();
             Container.Bind<BuildInfoManager>().AsSingle();
             Container.Bind<LoadingStepsManager>().AsSingle();
             Container.Bind<ScreenManager>().AsSingle();
             Container.Bind<IScreenManagerInfo>().To<ScreenManagerInfo>().AsSingle();
             Container.Bind<IScreenResolver>().To<SceneScreenResolver>().AsSingle();
-            Container.Bind<AssetManager>().AsSingle();
+            Container.Bind<AddressablesContentDatasource>().AsSingle();
 
-            Container.Bind<IMonoCallbacks>().FromInstance(_monoCallbacks);
+            Container.Bind<IMonoCallbacks>().FromInstance(unityMonoCallbacks);
             Container.Bind<ScreenSceneRoot>().FromInstance(screenSceneRoot);
 
             BindDatasources();

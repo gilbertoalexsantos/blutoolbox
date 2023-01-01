@@ -6,16 +6,16 @@ namespace BluEngine
 {
   public class LoadingStepsDatasource : IAsyncDatasource<IEnumerable<LoadingStep>>
   {
-    private readonly AssetManager _assetManager;
+    private readonly AddressablesContentDatasource _contentManager;
 
-    public LoadingStepsDatasource(AssetManager assetManager)
+    public LoadingStepsDatasource(AddressablesContentDatasource contentManager)
     {
-      _assetManager = assetManager;
+      _contentManager = contentManager;
     }
 
     public IEnumerator<IEnumerable<LoadingStep>> LoadAsync()
     {
-      return _assetManager.Load<LoadingStepsData>("LoadingStepsData")
+      return _contentManager.LoadAsset<LoadingStepsData>("LoadingStepsData")
         .Then((Either<LoadingStepsData, Exception> either) =>
         {
           if (either.IsRight)

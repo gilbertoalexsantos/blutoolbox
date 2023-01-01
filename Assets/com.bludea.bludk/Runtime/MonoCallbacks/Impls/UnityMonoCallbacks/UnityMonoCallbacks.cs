@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Bludk
 {
-    public class MonoCallbacks : MonoBehaviour, IMonoCallbacks, IHardReload, IDisposable
+    public class UnityMonoCallbacks : MonoBehaviour, IMonoCallbacks, IHardReload, IDisposable
     {
         private IHardReloadManager _hardReloadManager;
 

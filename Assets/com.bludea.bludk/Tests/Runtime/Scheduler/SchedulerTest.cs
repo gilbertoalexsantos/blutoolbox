@@ -15,12 +15,12 @@ namespace Bludk.Tests
         {
             IHardReloadManager hardReloadManager = new HardReloadManager();
 
-            MonoCallbacks monoCallbacks = new GameObject("MonoCallbacks").AddComponent<MonoCallbacks>();
-            monoCallbacks.Constructor(hardReloadManager);
+            UnityMonoCallbacks unityMonoCallbacks = new GameObject("MonoCallbacks").AddComponent<UnityMonoCallbacks>();
+            unityMonoCallbacks.Constructor(hardReloadManager);
 
             IClock clock = new UnityClock();
 
-            _scheduler = new Scheduler(monoCallbacks, clock, hardReloadManager);
+            _scheduler = new Scheduler(unityMonoCallbacks, clock, hardReloadManager);
         }
 
         [UnityTest]

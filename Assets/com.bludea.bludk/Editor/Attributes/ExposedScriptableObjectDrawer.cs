@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Bludk.Editor
 {
     [CustomPropertyDrawer(typeof(ExposedScriptableObjectAttribute), true)]
-    public class ExposedScriptableObjectAttributeDrawer : PropertyDrawer
+    public class ExposedScriptableObjectDrawer : PropertyDrawer
     {
         private UnityEditor.Editor _editor;
 

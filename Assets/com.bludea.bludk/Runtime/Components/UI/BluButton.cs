@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Bludk
 {
     public class BluButton : BluBehaviour
     {
-        private Button Btn => GetCached<Button>();
+        [RequiredField, SerializeField]
+        private Button _btn;
 
         private Func<IEnumerator> _routineCb;
         private Action _simpleCb;
@@ -17,8 +19,8 @@ namespace Bludk
             _simpleCb = cb;
             _routineCb = null;
 
-            Btn.onClick.RemoveAllListeners();
-            Btn.onClick.AddListener(OnBtnClicked);
+            _btn.onClick.RemoveAllListeners();
+            _btn.onClick.AddListener(OnBtnClicked);
         }
 
         public void SetOnClickRoutine(Func<IEnumerator> cb, ICancelToken token = null)
@@ -27,13 +29,13 @@ namespace Bludk
             _routineCb = cb;
             _token = token;
 
-            Btn.onClick.RemoveAllListeners();
-            Btn.onClick.AddListener(OnBtnClicked);
+            _btn.onClick.RemoveAllListeners();
+            _btn.onClick.AddListener(OnBtnClicked);
         }
 
         public void SetInteractable(bool interactable)
         {
-            Btn.interactable = interactable;
+            _btn.interactable = interactable;
         }
 
         private void OnBtnClicked()
