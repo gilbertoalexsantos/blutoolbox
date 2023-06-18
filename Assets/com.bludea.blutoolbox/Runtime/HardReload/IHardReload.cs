@@ -1,7 +1,7 @@
 namespace BluToolbox
 {
-    public interface IHardReload
-    {
-        void OnHardReload();
-    }
+  public interface IHardReload
+  {
+    void OnHardReload();
+  }
 }

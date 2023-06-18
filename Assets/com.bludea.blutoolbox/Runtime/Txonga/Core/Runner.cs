@@ -2,26 +2,26 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-    public class Runner : MonoBehaviour
+  public class Runner : MonoBehaviour
+  {
+    private static Runner _instance;
+
+    public static Runner Instance
     {
-        private static Runner _instance;
-
-        public static Runner Instance
+      get
+      {
+        if (_instance == null)
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new GameObject("Runner").AddComponent<Runner>();
-                }
-
-                return _instance;
-            }
+          _instance = new GameObject("Runner").AddComponent<Runner>();
         }
 
-        private void Awake()
-        {
-            DontDestroyOnLoad(this);
-        }
+        return _instance;
+      }
     }
+
+    private void Awake()
+    {
+      DontDestroyOnLoad(this);
+    }
+  }
 }

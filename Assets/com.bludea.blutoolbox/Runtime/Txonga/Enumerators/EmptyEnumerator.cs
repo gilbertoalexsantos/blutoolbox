@@ -3,18 +3,18 @@ using System.Collections;
 
 namespace BluToolbox
 {
-    internal class EmptyEnumerator : IEnumerator
+  internal class EmptyEnumerator : IEnumerator
+  {
+    public object Current => null;
+
+    public bool MoveNext()
     {
-        public object Current => null;
-
-        public bool MoveNext()
-        {
-            return false;
-        }
-
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
+      return false;
     }
+
+    public void Reset()
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

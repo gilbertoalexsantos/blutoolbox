@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-    public abstract class BluBehaviour : MonoBehaviour
+  public abstract class BluBehaviour : MonoBehaviour
+  {
+    private readonly Dictionary<Type, object> _cachedComponents = new();
+
+    protected T GetCached<T>() where T : MonoBehaviour
     {
-        private readonly Dictionary<Type, object> _cachedComponents = new();
+      Type type = typeof(T);
+      if (_cachedComponents.TryGetValue(type, out var cachedComponent))
+      {
+        return (T) cachedComponent;
+      }
 
-        protected T GetCached<T>() where T : MonoBehaviour
-        {
-            Type type = typeof(T);
-            if (_cachedComponents.ContainsKey(type))
-            {
-                return (T) _cachedComponents[type];
-            }
+      T component = GetComponentInChildren<T>(true);
+      _cachedComponents[type] = component;
 
-            T component = GetComponentInChildren<T>(true);
-            _cachedComponents[type] = component;
-
-            return component;
-        }
+      return component;
     }
+  }
 }

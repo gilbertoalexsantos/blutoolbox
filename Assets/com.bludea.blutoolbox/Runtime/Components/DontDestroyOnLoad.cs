@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-    public class DontDestroyOnLoad : MonoBehaviour
+  public class DontDestroyOnLoad : MonoBehaviour
+  {
+    private void Awake()
     {
-        private void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-        }
+      DontDestroyOnLoad(gameObject);
     }
+  }
 }
