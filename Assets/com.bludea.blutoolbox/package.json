@@ -1,0 +1,21 @@
+{
+  "name": "com.bludea.blutoolbox",
+  "version": "0.0.1",
+  "displayName": "BluToolbox",
+  "description": "Bludea Toolbox",
+  "unity": "2022.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "licensesUrl": "",
+  "keywords": [],
+  "author": {
+    "name": "Gilberto Alexandre dos Santos",
+    "email": "gilberto.alexsantos@gmail.com",
+    "url": "https://github.com/gilbertoalexsantos"
+  },
+  "dependencies": {
+  },
+  "type": "library",
+  "samples": []
+}

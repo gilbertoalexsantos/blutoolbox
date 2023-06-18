@@ -1,5 +1,0 @@
-using Bludk;
-
-public class {screenName} : ScreenUI<{screenName}, {screenControllerName}>
-{
-}
