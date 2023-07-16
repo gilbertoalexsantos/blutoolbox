@@ -1,5 +1,4 @@
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BluToolbox
@@ -29,26 +28,7 @@ namespace BluToolbox
 
     public static CancellationToken CreateCancellationToken(this GameObject obj)
     {
-      CancellationTokenSource source = new CancellationTokenSource();
-      CancellationToken token = source.Token;
-      if (obj == null)
-      {
-        source.Cancel();
-        source.Dispose();
-        return token;
-      }
-
-      TaskExtensions.RunOnMainThread(async () =>
-      {
-        while (obj != null)
-        {
-          await Awaitable.NextFrameAsync();
-        }
-        source.Cancel();
-        source.Dispose();
-      }, token);
-
-      return token;
+      return obj.GetOrAddComponent<OnDestroyBehaviour>().Token;
     }
   }
 }
