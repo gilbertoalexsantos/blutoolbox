@@ -1,5 +1,6 @@
 using System;
-using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,25 +10,22 @@ namespace BluToolbox
   {
     [SerializeField]
     private Button _btn;
-
-    private Func<IEnumerator> _routineCb;
-    private Action _simpleCb;
-    private ICancelToken _token;
+    
+    private Either<Func<Task>, Action> _cb;
+    private Maybe<CancellationToken> _maybeToken;
 
     public void SetOnClick(Action cb)
     {
-      _simpleCb = cb;
-      _routineCb = null;
+      _cb = cb.AsRight<Func<Task>, Action>();
 
       _btn.onClick.RemoveAllListeners();
       _btn.onClick.AddListener(OnBtnClicked);
     }
 
-    public void SetOnClickRoutine(Func<IEnumerator> cb, ICancelToken token = null)
+    public void SetOnClickRoutine(Func<Task> task, Maybe<CancellationToken> token)
     {
-      _simpleCb = null;
-      _routineCb = cb;
-      _token = token;
+      _cb = task.AsLeft<Func<Task>, Action>();
+      _maybeToken = token;
 
       _btn.onClick.RemoveAllListeners();
       _btn.onClick.AddListener(OnBtnClicked);
@@ -40,26 +38,29 @@ namespace BluToolbox
 
     private void OnBtnClicked()
     {
-      ICancelToken token = CreateCancelToken();
-      if (token.IsCancelled)
+      CancellationTokenSource source = CreateCancelTokenSource();
+      if (source.Token.IsCancellationRequested)
       {
+        source.Dispose();
         return;
       }
 
-      if (_simpleCb == null)
+      if (_cb.IsLeft)
       {
-        _routineCb().Start(token);   
+        TaskExtensions.RunOnMainThread(_cb.Left, source.Token);
       }
       else
       {
-        _simpleCb();
+        _cb.Right();
+        source.Dispose();
       }
     }
 
-    private ICancelToken CreateCancelToken()
+    private CancellationTokenSource CreateCancelTokenSource()
     {
-      ICancelToken btnToken = gameObject.CreateCancelToken();
-      return _token == null ? btnToken : new CompositeCancelToken(btnToken, _token);
+      CancellationToken token1 = gameObject.GetOrAddComponent<OnDestroyBehaviour>().Token;
+      CancellationToken token2 = _maybeToken.HasValue ? _maybeToken.Value : CancellationToken.None;
+      return CancellationTokenSource.CreateLinkedTokenSource(token1, token2);
     }
   }
 }

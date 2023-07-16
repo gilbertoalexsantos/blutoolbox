@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BluToolbox
@@ -18,6 +20,35 @@ namespace BluToolbox
     public static T GetOrAddComponent<T>(this Component component) where T : Component
     {
       return component.gameObject.GetOrAddComponent<T>();
+    }
+
+    public static CancellationToken CreateCancellationToken(this Component component)
+    {
+      return component.gameObject.CreateCancellationToken();
+    }
+
+    public static CancellationToken CreateCancellationToken(this GameObject obj)
+    {
+      CancellationTokenSource source = new CancellationTokenSource();
+      CancellationToken token = source.Token;
+      if (obj == null)
+      {
+        source.Cancel();
+        source.Dispose();
+        return token;
+      }
+
+      TaskExtensions.RunOnMainThread(async () =>
+      {
+        while (obj != null)
+        {
+          await Awaitable.NextFrameAsync();
+        }
+        source.Cancel();
+        source.Dispose();
+      }, token);
+
+      return token;
     }
   }
 }

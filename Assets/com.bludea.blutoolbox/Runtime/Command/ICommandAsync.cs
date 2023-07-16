@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BluToolbox
 {
   public interface ICommandAsync
   {
-    IEnumerator Execute();
+    Task Execute();
   }
 
-  public interface ICommandAsync<out T>
+  public interface ICommandAsync<T>
   {
-    IEnumerator<T> Execute();
+    Task<T> Execute();
   }
 }
