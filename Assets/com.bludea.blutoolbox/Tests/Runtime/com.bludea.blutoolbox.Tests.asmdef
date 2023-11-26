@@ -1,5 +1,5 @@
 {
-    "name": "com.bludea.blutoolbox.Runtime.te",
+    "name": "com.bludea.blutoolbox.Runtime.Tests",
     "rootNamespace": "",
     "references": [
         "GUID:91767d6d0600e4a599ee68d42ad0634e",

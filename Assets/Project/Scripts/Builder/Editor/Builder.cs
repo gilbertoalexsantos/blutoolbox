@@ -30,11 +30,11 @@ public static class Builder
     string outputPath = CommandLineUtils.GetArg("output_path", args);
     List<string> packagePaths = new()
     {
-      "Assets/com.bludea.BluToolbox",
+      "Assets/com.bludea.blutoolbox",
     };
 
     Log("BluToolbox Builder: Exporting package...");
-    string fileName = "build.unitypackage";
+    string fileName = "blutoolbox.unitypackage";
     AssetDatabase.ExportPackage(
       packagePaths.ToArray(), 
       fileName,

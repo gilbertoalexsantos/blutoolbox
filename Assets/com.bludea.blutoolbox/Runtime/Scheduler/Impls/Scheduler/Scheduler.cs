@@ -51,9 +51,9 @@ namespace BluToolbox
       return scheduleSeconds;
     }
 
-    public IDisposable ScheduleOnce(float seconds, Action callback)
+    public IDisposable ScheduleOnce(float delay, Action callback)
     {
-      ScheduleSeconds scheduleSeconds = new ScheduleSeconds(seconds, false, _clock.SecondsSinceStartup, callback);
+      ScheduleSeconds scheduleSeconds = new ScheduleSeconds(delay, false, _clock.SecondsSinceStartup, callback);
       _schedules.Add(scheduleSeconds);
       return scheduleSeconds;
     }

@@ -36,20 +36,16 @@ namespace BluToolbox
       }
     }
 
-    internal Either(Maybe<L> left, Maybe<R> right)
+    internal Either(L left)
     {
-      if (!left.HasValue && !right.HasValue)
-      {
-        throw new ArgumentException("Either left or right should have a valid value");
-      }
+      _left = Maybe.Some(left);
+      _right = Maybe.None<R>();
+    }
 
-      if (left.HasValue && right.HasValue)
-      {
-        throw new ArgumentException("Only left or only right should have a valid value");
-      }
-
-      _left = left;
-      _right = right;
+    internal Either(R right)
+    {
+      _left = Maybe.None<L>();
+      _right = Maybe.Some(right);
     }
   }
 }
