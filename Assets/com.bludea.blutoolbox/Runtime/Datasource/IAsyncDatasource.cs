@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BluToolbox
 {
-  public interface IAsyncDatasource<out T>
+  public interface IAsyncDatasource<T>
   {
-    IEnumerator<T> LoadAsync();
+    Task<T> LoadAsync();
   }
 }
