@@ -13,12 +13,12 @@ on:
         - major
 
 jobs:
-  ubuntu-latest:
-    name: ubuntu-latest
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: 'Create a new release'
-        run: ./build.cmd Release
+      - name: 'Execute nuke release'
+        run: ./build.sh release
         env:
           release-type: ${{ github.event.inputs.release-type }}
