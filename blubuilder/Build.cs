@@ -1,17 +1,18 @@
+using System.Collections.Generic;
 using System.Linq;
-using LibGit2Sharp;
 using NuGet.Versioning;
 using Nuke.Common;
 using Nuke.Common.Git;
-using Nuke.Common.Utilities.Collections;
+using Nuke.Common.Utilities;
 using Serilog;
 
 class Build : NukeBuild
 {
   public static int Main() => Execute<Build>(x => x.HelloWorld);
 
+  [Parameter(Name = "release-type")] readonly ReleaseType ReleaseParam;
+
   [GitRepository] readonly GitRepository Repository;
-  [Parameter(Name = "deploy-type")] readonly DeployParameter DeployParam;
 
   Target HelloWorld => _ => _
     .Executes(() =>
@@ -19,29 +20,25 @@ class Build : NukeBuild
       Log.Information("Hello World!");
     });
 
-  Target Deploy => _ => _
-    .Requires(() => !Repository.Tags.IsEmpty())
-    .Executes(() =>
+  Target Release => _ => _
+    .Requires(() => ReleaseParam != null)
+    .Executes(async () =>
     {
-      string lastTag = Repository.Tags.Last();
-      Log.Information("Last tag: {0}", lastTag);
+      GitService git = new(Repository.LocalDirectory);
+      await git.Fetch();
 
-      SemanticVersion semanticVersion = SemanticVersion.Parse(lastTag).IncrementVersion(DeployParam);
+
+      // Applying new tag
+      List<string> tags = await git.GetTags();
+      string lastTag = tags.Last().IsNullOrEmpty() ? "0.0.0" : tags.Last();
+      SemanticVersion semanticVersion = SemanticVersion.Parse(lastTag).IncrementVersion(ReleaseParam);
       string newTag = semanticVersion.ToString();
-      Log.Information("New tag: {0}", newTag);
+      Log.Information("New tag to apply: {0}", newTag);
 
-      using Repository repo = new(Repository.LocalDirectory);
-      repo.NotNull();
 
-      FetchOptions fetchOptions = new()
-      {
-        TagFetchMode = TagFetchMode.All,
-        Prune = true
-      };
-      repo.Network.Fetch("origin", Enumerable.Empty<string>(), fetchOptions);
-      Assert.False(repo.Tags.Any(tag => tag.FriendlyName == newTag), "Tag already exists");
-      repo.ApplyTag(newTag);
-      repo.Network.Push(repo.Network.Remotes["origin"], $"refs/tags/{newTag}");
-      Log.Information("Tag {0} has been pushed to origin", newTag);
+      // Apply new tag
+      Assert.False(tags.Any(tag => tag == newTag), "Tag already exists");
+      await git.ApplyTag(newTag);
+      await git.PushTags();
     });
 }

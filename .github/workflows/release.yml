@@ -1,0 +1,23 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Release type"
+        required: true
+        options: 
+        - patch
+        - minor
+        - major
+
+jobs:
+  ubuntu-latest:
+    name: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: 'Create a new release'
+        run: ./build.cmd Release
+        env:
+          release-type: ${{ github.event.inputs.release-type }}
