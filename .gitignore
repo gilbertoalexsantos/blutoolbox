@@ -22,5 +22,5 @@ ProjectSettings/RiderScriptEditorPersistedState.asset
 
 
 # NUKE
-.nuke
+.nuke/temp
 !blubuilder.csproj
