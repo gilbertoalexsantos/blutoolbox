@@ -12,11 +12,11 @@ namespace BluToolbox
     public Action Callback { get; private set; }
     public bool ShouldRemove { get; private set; }
 
-    public ScheduleSeconds(float seconds, bool repeat, float secondsSinceStartup, Action callback)
+    public ScheduleSeconds(float delay, float seconds, bool repeat, float secondsSinceStartup, Action callback)
     {
       _seconds = seconds;
       _repeat = repeat;
-      _nextSecondToExecute = secondsSinceStartup + seconds;
+      _nextSecondToExecute = secondsSinceStartup + delay;
       Callback = callback;
     }
 

@@ -27,7 +27,7 @@ namespace BluToolbox.Tests
     public IEnumerator TestSchedule()
     {
       int value = 0;
-      _scheduler.Schedule(1f, () => { value++; });
+      _scheduler.Schedule(delay: 1f, seconds: 1f, () => { value++; });
       yield return new WaitForSeconds(0.5f);
       Assert.AreEqual(0, value);
       yield return new WaitForSeconds(0.6f);
@@ -40,7 +40,7 @@ namespace BluToolbox.Tests
     public IEnumerator TestScheduleDispose()
     {
       int value = 0;
-      IDisposable schedule = _scheduler.Schedule(1f, () => { value++; });
+      IDisposable schedule = _scheduler.Schedule(delay: 1f, seconds: 1f, () => { value++; });
       yield return new WaitForSeconds(1.1f);
       Assert.AreEqual(1, value);
       schedule.Dispose();
@@ -48,7 +48,7 @@ namespace BluToolbox.Tests
       Assert.AreEqual(1, value);
 
       int value2 = 0;
-      IDisposable schedule2 = _scheduler.Schedule(1f, () => { value2++; });
+      IDisposable schedule2 = _scheduler.Schedule(delay: 1f, seconds: 1f, () => { value2++; });
       schedule2.Dispose();
       yield return new WaitForSeconds(2f);
       Assert.AreEqual(value2, 0);

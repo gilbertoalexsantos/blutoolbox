@@ -44,23 +44,23 @@ namespace BluToolbox
       }
     }
 
-    public IDisposable Schedule(float seconds, Action callback)
+    public IDisposable Schedule(float delay, float seconds, Action callback)
     {
-      ScheduleSeconds scheduleSeconds = new ScheduleSeconds(seconds, true, _clock.SecondsSinceStartup, callback);
+      ScheduleSeconds scheduleSeconds = new(delay, seconds, repeat: true, _clock.SecondsSinceStartup, callback);
       _schedules.Add(scheduleSeconds);
       return scheduleSeconds;
     }
 
     public IDisposable ScheduleOnce(float delay, Action callback)
     {
-      ScheduleSeconds scheduleSeconds = new ScheduleSeconds(delay, false, _clock.SecondsSinceStartup, callback);
+      ScheduleSeconds scheduleSeconds = new(delay, seconds: 0f, repeat: false, _clock.SecondsSinceStartup, callback);
       _schedules.Add(scheduleSeconds);
       return scheduleSeconds;
     }
 
     public IDisposable ScheduleEveryFrame(Action callback)
     {
-      ScheduleEveryFrame scheduleEveryFrame = new ScheduleEveryFrame(_clock.FrameCount, callback);
+      ScheduleEveryFrame scheduleEveryFrame = new(_clock.FrameCount, callback);
       _schedules.Add(scheduleEveryFrame);
       return scheduleEveryFrame;
     }
