@@ -47,5 +47,15 @@ namespace BluToolbox
       _left = Maybe.None<L>();
       _right = Maybe.Some(right);
     }
+
+    public static implicit operator Either<L, R>(L left)
+    {
+      return left.AsLeft<L, R>();
+    }
+
+    public static implicit operator Either<L, R>(R right)
+    {
+      return right.AsRight<L, R>();
+    }
   }
 }

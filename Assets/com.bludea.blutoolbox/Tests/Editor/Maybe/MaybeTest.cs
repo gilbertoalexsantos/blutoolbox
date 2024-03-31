@@ -19,6 +19,21 @@ namespace BluToolbox.Tests
     }
 
     [Test]
+    public void TestUnpackImplicitOperator()
+    {
+      Maybe<int> fooM = 5;
+      Assert.AreEqual(5, fooM.Value);
+
+      fooM = 5.Some();
+      Assert.AreEqual(5, fooM.Value);
+
+      fooM = fooM.Some();
+      Assert.AreEqual(5, fooM.Value);
+      
+      Assert.IsTrue(fooM == 5);
+    }
+
+    [Test]
     public void TestEquality()
     {
       Maybe<int> fooM = Maybe.Some(5);
@@ -32,9 +47,9 @@ namespace BluToolbox.Tests
     [Test]
     public void TestComparison()
     {
-      Maybe<int> m4 = Maybe.Some(4);
+      Maybe<int> m4 = 4;
       Maybe<int> otherM4 = Maybe.Some(4);
-      Maybe<int> m5 = Maybe.Some(5);
+      Maybe<int> m5 = 5;
       Maybe<int> m6 = Maybe.Some(6);
 
       Assert.IsTrue(m5 > m4 && m6 > m5);

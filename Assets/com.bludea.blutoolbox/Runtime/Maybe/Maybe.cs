@@ -55,10 +55,8 @@ namespace BluToolbox
       {
         return Value == null ? 1 : Value.GetHashCode();
       }
-      else
-      {
-        return 0;
-      }
+
+      return 1;
     }
 
     public int CompareTo(Maybe<T> other)
@@ -86,5 +84,15 @@ namespace BluToolbox
     public static bool operator <=(Maybe<T> left, Maybe<T> right) => left.CompareTo(right) <= 0;
     public static bool operator >(Maybe<T> left, Maybe<T> right) => left.CompareTo(right) > 0;
     public static bool operator >=(Maybe<T> left, Maybe<T> right) => left.CompareTo(right) >= 0;
+
+    public static implicit operator T(Maybe<T> maybe)
+    {
+      return maybe.HasValue ? maybe.Value : default;
+    }
+
+    public static implicit operator Maybe<T>(T value)
+    {
+      return value == null ? Maybe.None<T>() : Maybe.Some(value);
+    }
   }
 }
