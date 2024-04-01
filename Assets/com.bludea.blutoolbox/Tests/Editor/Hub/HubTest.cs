@@ -60,6 +60,33 @@ namespace BluToolbox.Tests
       _hub.Call(new TestEvent(5));
       Assert.AreEqual(2, cnt);
     }
+    
+    [Test]
+    public void TestTwoHandlersPointingToTheSameCallbackWillStillCall()
+    {
+      int cnt = 0;
+      Action<TestEvent> action = value =>
+      {
+        cnt++;
+        Assert.AreEqual(5, value.Value);
+      };
+
+      IDisposable foo = _hub.Register(action);
+      IDisposable bar = _hub.Register(action);
+
+      _hub.Call(new TestEvent(5));
+      Assert.AreEqual(2, cnt);
+
+      foo.Dispose();
+
+      _hub.Call(new TestEvent(5));
+      Assert.AreEqual(3, cnt);
+      
+      bar.Dispose();
+
+      _hub.Call(new TestEvent(5));
+      Assert.AreEqual(3, cnt);
+    }
 
     [Test]
     public void TestNullParameterThrowsException()

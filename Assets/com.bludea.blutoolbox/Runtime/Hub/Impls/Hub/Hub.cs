@@ -6,53 +6,50 @@ namespace BluToolbox
 {
   public class Hub : IHub
   {
-    private readonly Dictionary<Type, List<object>> _actions = new();
+    private readonly Dictionary<Type, List<HubEventDisposable>> _actions = new();
 
-    public IHubEventDisposable Register<T>(Action<T> action) where T : IHubEvent
+    public IHubEventDisposable Register<T>(Action<T> cb) where T : IHubEvent
     {
-      if (action == null)
+      if (cb == null)
       {
-        throw new ArgumentNullException($"{nameof(action)} cannot be null");
+        throw new ArgumentNullException($"{nameof(cb)} cannot be null");
       }
 
-      HubEventDisposable disposable = new(action, (HubEventDisposable hubEventDisposable) =>
-      {
-        Remove(action);
-      });
+      HubEventDisposable handler = new(cb, Remove);
 
-      Type type = typeof(T);
-      if (_actions.TryGetValue(typeof(T), out List<object> actions))
+      Type type = typeof(Action<T>);
+      if (_actions.TryGetValue(type, out List<HubEventDisposable> handlers))
       {
-        actions.Add(action);
+        handlers.Add(handler);
       }
       else
       {
-        _actions[type] = new List<object>
+        _actions[type] = new List<HubEventDisposable>
         {
-          action
+          handler
         };
       }
 
-      return disposable;
+      return handler;
     }
 
     public void Call<T>(T hubEvent) where T : IHubEvent
     {
-      if (_actions.TryGetValue(typeof(T), out List<object> actions))
+      if (_actions.TryGetValue(typeof(Action<T>), out List<HubEventDisposable> handlers))
       {
-        foreach (object action in actions.ToList())
+        foreach (HubEventDisposable handler in handlers.ToList())
         {
-          ((Action<T>) action)(hubEvent);
+          ((Action<T>) handler.Callback)(hubEvent);
         }
       }
     }
 
-    private void Remove<T>(Action<T> action) where T : IHubEvent
+    private void Remove(HubEventDisposable handler)
     {
-      Type type = typeof(T);
-      if (_actions.TryGetValue(type, out List<object> actions))
+      Type type = handler.Callback.GetType();
+      if (_actions.TryGetValue(type, out List<HubEventDisposable> handlers))
       {
-        actions.Remove(action);
+        handlers.Remove(handler);
       }
     }
   }
