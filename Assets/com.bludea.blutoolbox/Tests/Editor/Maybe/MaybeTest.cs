@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 
 namespace BluToolbox.Tests
@@ -9,28 +8,32 @@ namespace BluToolbox.Tests
     public void TestUnpack()
     {
       Maybe<int> fooM = Maybe.Some(5);
-      Assert.AreEqual(5, fooM.Value);
+      Assert.AreEqual(5, fooM.ValueOr(0));
 
       fooM = 5.Some();
-      Assert.AreEqual(5, fooM.Value);
+      Assert.AreEqual(5, fooM.ValueOr(0));
 
       fooM = fooM.Some();
-      Assert.AreEqual(5, fooM.Value);
+      Assert.AreEqual(5, fooM.ValueOr(0));
     }
 
     [Test]
     public void TestUnpackImplicitOperator()
     {
       Maybe<int> fooM = 5;
-      Assert.AreEqual(5, fooM.Value);
+      Assert.AreEqual(5, fooM.ValueOr(0));
 
       fooM = 5.Some();
-      Assert.AreEqual(5, fooM.Value);
+      Assert.AreEqual(5, fooM.ValueOr(0));
 
       fooM = fooM.Some();
-      Assert.AreEqual(5, fooM.Value);
-      
+      Assert.AreEqual(5, fooM.ValueOr(0));
+
       Assert.IsTrue(fooM == 5);
+
+      fooM = 0;
+      Assert.AreEqual(0, fooM.ValueOr(0));
+      Assert.IsTrue(fooM.HasValue);
     }
 
     [Test]
@@ -73,19 +76,7 @@ namespace BluToolbox.Tests
       Assert.IsTrue(m4 != none);
 
       Maybe<int> none2 = 6.None();
-      Assert.IsTrue(none == none2);
-      Assert.IsFalse(none != none2);
-    }
-
-    [Test]
-    public void ThrowExceptionOnAccessWithNoValue()
-    {
-      Maybe<int> m = Maybe.None<int>();
-
-      Assert.Throws<Exception>(() =>
-      {
-        Assert.Equals(0, m.Value);
-      });
+      Assert.IsTrue(none != none2);
     }
   }
 }

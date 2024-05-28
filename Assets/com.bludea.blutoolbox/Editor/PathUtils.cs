@@ -14,7 +14,7 @@ namespace BluToolbox.Editor
         throw new Exception($"AssetPath '{assetPath}' doesn't starts with prefix {assetPrefix}");
       }
 
-      DirectoryInfo dataPathDirectory = new DirectoryInfo(Application.dataPath);
+      DirectoryInfo dataPathDirectory = new(Application.dataPath);
       if (dataPathDirectory.Parent == null)
       {
         throw new Exception($"Could not find parent directory for {dataPathDirectory}");

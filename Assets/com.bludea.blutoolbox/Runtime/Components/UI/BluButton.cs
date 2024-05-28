@@ -10,7 +10,7 @@ namespace BluToolbox
   {
     [SerializeField]
     private Button _btn;
-    
+
     private Either<Func<Task>, Action> _cb;
     private Maybe<CancellationToken> _maybeToken;
 
@@ -22,7 +22,7 @@ namespace BluToolbox
       _btn.onClick.AddListener(OnBtnClicked);
     }
 
-    public void SetOnClickRoutine(Func<Task> task, Maybe<CancellationToken> token)
+    public void SetOnClick(Func<Task> task, Maybe<CancellationToken> token)
     {
       _cb = task.AsLeft<Func<Task>, Action>();
       _maybeToken = token;
@@ -45,13 +45,17 @@ namespace BluToolbox
         return;
       }
 
-      if (_cb.IsLeft)
+      if (_cb.TryGetLeft(out Func<Task> task))
       {
-        TaskExtensions.RunOnMainThread(_cb.Left, source.Token);
+        TaskHelper.FireAndForget(async () =>
+        {
+          await task();
+          source.Dispose();
+        }, source.Token);
       }
-      else
+      else if (_cb.TryGetRight(out Action action))
       {
-        _cb.Right();
+        action();
         source.Dispose();
       }
     }
@@ -59,7 +63,7 @@ namespace BluToolbox
     private CancellationTokenSource CreateCancelTokenSource()
     {
       CancellationToken token1 = gameObject.GetOrAddComponent<OnDestroyBehaviour>().Token;
-      CancellationToken token2 = _maybeToken.HasValue ? _maybeToken.Value : CancellationToken.None;
+      CancellationToken token2 = _maybeToken.TryGetValue(out CancellationToken v) ? v : CancellationToken.None;
       return CancellationTokenSource.CreateLinkedTokenSource(token1, token2);
     }
   }

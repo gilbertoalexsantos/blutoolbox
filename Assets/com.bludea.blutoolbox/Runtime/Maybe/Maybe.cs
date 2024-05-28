@@ -10,7 +10,7 @@ namespace BluToolbox
 
     public bool HasValue => _hasValue;
 
-    public T Value
+    private T Value
     {
       get
       {
@@ -29,19 +29,31 @@ namespace BluToolbox
       _hasValue = hasValue;
     }
 
-    public bool Equals(Maybe<T> other)
+    public bool TryGetValue(out T value)
     {
-      if (!HasValue && !other.HasValue)
+      if (HasValue)
       {
+        value = Value;
         return true;
       }
 
-      if (_hasValue && other.HasValue)
+      value = default;
+      return false;
+    }
+
+    public T ValueOr(T defaultValue)
+    {
+      return TryGetValue(out T v) ? v : defaultValue;
+    }
+
+    public bool Equals(Maybe<T> other)
+    {
+      if (!HasValue || !other.HasValue)
       {
-        return EqualityComparer<T>.Default.Equals(Value, other.Value);
+        return false;
       }
 
-      return false;
+      return EqualityComparer<T>.Default.Equals(Value, other.Value);
     }
 
     public override bool Equals(object obj)
@@ -51,18 +63,12 @@ namespace BluToolbox
 
     public override int GetHashCode()
     {
-      if (HasValue)
-      {
-        return Value == null ? 1 : Value.GetHashCode();
-      }
-
-      return 1;
+      return TryGetValue(out T v) ? v.GetHashCode() : 0;
     }
 
     public int CompareTo(Maybe<T> other)
     {
-      if (HasValue && !other.HasValue) return 1;
-      if (!HasValue && other.HasValue) return -1;
+      if (!HasValue || !other.HasValue) return 0;
       return Comparer<T>.Default.Compare(Value, other.Value);
     }
 
@@ -70,12 +76,10 @@ namespace BluToolbox
     {
       if (HasValue)
       {
-        return Value == null ? "Some (null)" : $"Some ({Value})";
+        return Value == null ? "<<null>>" : Value.ToString();
       }
-      else
-      {
-        return "None";
-      }
+
+      return "<<null>>";
     }
 
     public static bool operator ==(Maybe<T> left, Maybe<T> right) => left.Equals(right);
@@ -84,11 +88,6 @@ namespace BluToolbox
     public static bool operator <=(Maybe<T> left, Maybe<T> right) => left.CompareTo(right) <= 0;
     public static bool operator >(Maybe<T> left, Maybe<T> right) => left.CompareTo(right) > 0;
     public static bool operator >=(Maybe<T> left, Maybe<T> right) => left.CompareTo(right) >= 0;
-
-    public static implicit operator T(Maybe<T> maybe)
-    {
-      return maybe.HasValue ? maybe.Value : default;
-    }
 
     public static implicit operator Maybe<T>(T value)
     {

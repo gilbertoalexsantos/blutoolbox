@@ -36,7 +36,7 @@ namespace BluToolbox.Editor
 
     public static void RunBashCommand(string command)
     {
-      StringBuilder shFileContentBuilder = new StringBuilder();
+      StringBuilder shFileContentBuilder = new();
       shFileContentBuilder.AppendLine("#!/bin/bash");
 
       shFileContentBuilder.AppendLine("if [ -f ~/.profile ]; then");
@@ -57,7 +57,7 @@ namespace BluToolbox.Editor
       try
       {
         File.WriteAllText(tmpFilePath, shFileContentBuilder.ToString());
-        ProcessStartInfo psi = new ProcessStartInfo
+        ProcessStartInfo psi = new()
         {
           FileName = "/bin/bash",
           Arguments = tmpFilePath,

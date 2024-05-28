@@ -2,7 +2,7 @@ namespace BluToolbox
 {
   public interface ICommand
   {
-    void Execute();
+    void Execute(); 
   }
 
   public interface ICommand<out T>

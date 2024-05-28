@@ -1,119 +1,118 @@
 using System;
-using System.Collections;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace BluToolbox.Tests
 {
   public class SchedulerTest
   {
+    private TestGameLoop _gameLoop;
+    private TestClock _clock;
     private Scheduler _scheduler;
 
     [SetUp]
     public void SetUp()
     {
-      IHardReloadManager hardReloadManager = new HardReloadManager();
-
-      UnityMonoCallbacks unityMonoCallbacks = new GameObject("MonoCallbacks").AddComponent<UnityMonoCallbacks>();
-      unityMonoCallbacks.Constructor(hardReloadManager);
-
-      IClock clock = new UnityClock();
-
-      _scheduler = new Scheduler(unityMonoCallbacks, clock, hardReloadManager);
+      _gameLoop = new TestGameLoop();
+      _clock = new TestClock();
+      _scheduler = new Scheduler(_clock, _gameLoop);
     }
 
-    [UnityTest]
-    public IEnumerator TestSchedule()
+    [Test]
+    public void TestSchedule()
     {
       int value = 0;
       _scheduler.Schedule(delay: 1f, seconds: 1f, () => { value++; });
-      yield return new WaitForSeconds(0.5f);
+      WaitSeconds(0.5f);
       Assert.AreEqual(0, value);
-      yield return new WaitForSeconds(0.6f);
+      WaitSeconds(0.6f);
       Assert.AreEqual(1, value);
-      yield return new WaitForSeconds(2.2f);
+      WaitSeconds(2.2f);
       Assert.AreEqual(3, value);
     }
 
-    [UnityTest]
-    public IEnumerator TestScheduleDispose()
+    [Test]
+    public void TestScheduleDispose()
     {
       int value = 0;
       IDisposable schedule = _scheduler.Schedule(delay: 1f, seconds: 1f, () => { value++; });
-      yield return new WaitForSeconds(1.1f);
+      WaitSeconds(1.1f);
       Assert.AreEqual(1, value);
       schedule.Dispose();
-      yield return new WaitForSeconds(2f);
+      WaitSeconds(2f);
       Assert.AreEqual(1, value);
 
       int value2 = 0;
       IDisposable schedule2 = _scheduler.Schedule(delay: 1f, seconds: 1f, () => { value2++; });
       schedule2.Dispose();
-      yield return new WaitForSeconds(2f);
+      WaitSeconds(2f);
       Assert.AreEqual(value2, 0);
     }
 
-    [UnityTest]
-    public IEnumerator TestScheduleOnce()
+    [Test]
+    public void TestScheduleOnce()
     {
       int value = 0;
       _scheduler.ScheduleOnce(1f, () => { value++; });
-      yield return new WaitForSeconds(0.5f);
+      WaitSeconds(0.5f);
       Assert.AreEqual(0, value);
-      yield return new WaitForSeconds(0.6f);
+      WaitSeconds(0.6f);
       Assert.AreEqual(1, value);
-      yield return new WaitForSeconds(1.1f);
+      WaitSeconds(1.1f);
       Assert.AreEqual(1, value);
     }
 
-    [UnityTest]
-    public IEnumerator TestScheduleOnceDispose()
+    [Test]
+    public void TestScheduleOnceDispose()
     {
       int value = 0;
       IDisposable schedule = _scheduler.ScheduleOnce(1f, () => { value++; });
-      yield return new WaitForSeconds(0.5f);
+      WaitSeconds(0.5f);
       Assert.AreEqual(0, value);
       schedule.Dispose();
-      yield return new WaitForSeconds(1f);
+      WaitSeconds(1f);
       Assert.AreEqual(0, value);
 
       int value2 = 0;
       IDisposable schedule2 = _scheduler.ScheduleOnce(1f, () => { value2++; });
       schedule2.Dispose();
-      yield return new WaitForSeconds(1.5f);
+      WaitSeconds(1.5f);
       Assert.AreEqual(0, value2);
     }
 
-    [UnityTest]
-    public IEnumerator TestScheduleEveryFrame()
+    [Test]
+    public void TestScheduleEveryFrame()
     {
       int value = 0;
-      int startFrame = Time.frameCount;
+      int startFrame = _clock.FrameCount;
       _scheduler.ScheduleEveryFrame(() => { value++; });
-      yield return new WaitForSeconds(1f);
-      int framesPassed = Time.frameCount - startFrame;
+      WaitSeconds(1f);
+      int framesPassed = _clock.FrameCount - startFrame;
       Assert.IsTrue(value == framesPassed || value == framesPassed - 1 || value == framesPassed + 1);
     }
 
-    [UnityTest]
-    public IEnumerator TestScheduleEveryFrameDispose()
+    [Test]
+    public void TestScheduleEveryFrameDispose()
     {
       int value = 0;
-      int startFrame = Time.frameCount;
+      int startFrame = _clock.FrameCount;
       IDisposable schedule = _scheduler.ScheduleEveryFrame(() => { value++; });
-      yield return new WaitForSeconds(1f);
-      int framesPassed = Time.frameCount - startFrame;
+      WaitSeconds(1f);
+      int framesPassed = _clock.FrameCount - startFrame;
       Assert.IsTrue(value == framesPassed || value == framesPassed - 1 || value == framesPassed + 1);
       schedule.Dispose();
-      yield return new WaitForSeconds(1f);
+      WaitSeconds(1f);
       Assert.IsTrue(value == framesPassed || value == framesPassed - 1 || value == framesPassed + 1);
 
       int value2 = 0;
       IDisposable schedule2 = _scheduler.ScheduleEveryFrame(() => { value2++; });
       schedule2.Dispose();
-      yield return new WaitForSeconds(1f);
+      WaitSeconds(1f);
       Assert.AreEqual(0, value2);
+    }
+
+    private void WaitSeconds(float seconds)
+    {
+      TestHelper.WaitSeconds(seconds, _gameLoop, _clock);
     }
   }
 }

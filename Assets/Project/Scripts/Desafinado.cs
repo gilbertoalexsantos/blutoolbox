@@ -3,7 +3,7 @@ using BluToolbox;
 using UnityEngine;
 
 public class Desafinado : MonoBehaviour
-{ 
+{
   public BluButton btn;
 
   private readonly CancellationTokenSource source = new();
@@ -11,15 +11,12 @@ public class Desafinado : MonoBehaviour
   public void Start()
   {
     CancellationToken token = btn.CreateCancellationToken();
-    btn.SetOnClickRoutine(async () =>
+    btn.SetOnClick(async () =>
     {
-      Debug.Log(Time.frameCount);
-      while (true)
-      {
-        Debug.Log(Time.frameCount);
-        await Awaitable.NextFrameAsync(token);
-      }
-    }, token.Some());
+      Debug.Log(Time.frameCount + " Start of click");
+      await Awaitable.NextFrameAsync();
+      Debug.Log(Time.frameCount + " End of click");
+    }, token);
   }
 
   public void Update()

@@ -3,29 +3,27 @@ using System.Collections.Generic;
 
 namespace BluToolbox
 {
-  public class Scheduler : IScheduler, IHardReload, IDisposable
+  public class Scheduler : IScheduler, IGameLoopListener
   {
-    private readonly IMonoCallbacks _monoCallbacks;
     private readonly IClock _clock;
 
-    private readonly List<ISchedule> _schedules;
+    private readonly List<ISchedule> _schedules = new();
+    private readonly IGameLoopHandlerDisposable _gameLoopHandlerDisposable;
+    private readonly IHardReloadDisposable _hardReloadDisposable;
 
-    public Scheduler(IMonoCallbacks monoCallbacks, IClock clock, IHardReloadManager hardReloadManager)
+    public Scheduler(IClock clock, IGameLoop gameLoop)
     {
-      _monoCallbacks = monoCallbacks;
       _clock = clock;
-      _schedules = new List<ISchedule>();
-      _monoCallbacks.AddOnUpdate(Update);
-      hardReloadManager.AddOnHardReload(this);
+      _gameLoopHandlerDisposable = gameLoop.Register(this);
     }
 
-    private void Update()
+    public void OnUpdate()
     {
       float secondsSinceStartup = _clock.SecondsSinceStartup;
       int frame = _clock.FrameCount;
       for (int i = _schedules.Count - 1; i >= 0; i--)
       {
-        var schedule = _schedules[i];
+        ISchedule schedule = _schedules[i];
         if (schedule.ShouldRemove)
         {
           _schedules.RemoveAt(i);
@@ -42,6 +40,14 @@ namespace BluToolbox
           _schedules.RemoveAt(i);
         }
       }
+    }
+
+    public void OnLateUpdate()
+    {
+    }
+
+    public void OnFixedUpdate()
+    {
     }
 
     public IDisposable Schedule(float delay, float seconds, Action callback)
@@ -67,8 +73,9 @@ namespace BluToolbox
 
     public void Dispose()
     {
-      _monoCallbacks.RemoveOnUpdate(Update);
       _schedules.Clear();
+      _hardReloadDisposable.Dispose();
+      _gameLoopHandlerDisposable.Dispose();
     }
 
     public void OnHardReload()

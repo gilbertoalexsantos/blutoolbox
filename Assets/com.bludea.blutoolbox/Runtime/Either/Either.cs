@@ -10,29 +10,29 @@ namespace BluToolbox
     public bool IsLeft => _left.HasValue;
     public bool IsRight => _right.HasValue;
 
-    public L Left
+    private L Left
     {
       get
       {
-        if (!IsLeft)
+        if (_left.TryGetValue(out L v))
         {
-          throw new Exception("You can't unpack because it's not a left one");
+          return v;
         }
 
-        return _left.Value;
+        throw new Exception("You can't unpack because it's not a left one");
       }
     }
 
-    public R Right
+    private R Right
     {
       get
       {
-        if (!IsRight)
+        if (_right.TryGetValue(out R v))
         {
-          throw new Exception("You can't unpack because it's not a right one");
+          return v;
         }
 
-        return _right.Value;
+        throw new Exception("You can't unpack because it's not a right one");
       }
     }
 
@@ -46,6 +46,16 @@ namespace BluToolbox
     {
       _left = Maybe.None<L>();
       _right = Maybe.Some(right);
+    }
+
+    public bool TryGetLeft(out L value)
+    {
+      return _left.TryGetValue(out value);
+    }
+
+    public bool TryGetRight(out R value)
+    {
+      return _right.TryGetValue(out value);
     }
 
     public static implicit operator Either<L, R>(L left)

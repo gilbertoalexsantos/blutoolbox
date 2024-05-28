@@ -1,28 +1,31 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BluToolbox
 {
   public class HardReloadManager : IHardReloadManager
   {
-    private readonly HashSet<IHardReload> _objs = new();
+    private readonly HashSet<HardReloadDisposable> _handlers = new();
 
     public void HardReload()
     {
-      foreach (IHardReload obj in _objs)
+      foreach (HardReloadDisposable handler in _handlers.ToList())
       {
-        obj.OnHardReload();        
+        handler.Obj.OnHardReload();
       }
-      _objs.Clear();
+      _handlers.Clear();
     }
 
-    public void AddOnHardReload(IHardReload obj)
+    public IHardReloadDisposable Register(IHardReload obj)
     {
-      _objs.Add(obj);
+      HardReloadDisposable disposable = new(obj, Remove);
+      _handlers.Add(disposable);
+      return disposable;
     }
 
-    public void RemoveOnHardReload(IHardReload obj)
+    private void Remove(HardReloadDisposable disposable)
     {
-      _objs.Remove(obj);
+      _handlers.Remove(disposable);
     }
   }
 }

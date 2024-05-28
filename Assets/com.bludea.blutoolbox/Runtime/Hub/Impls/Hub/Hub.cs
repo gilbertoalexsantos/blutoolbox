@@ -6,25 +6,22 @@ namespace BluToolbox
 {
   public class Hub : IHub
   {
-    private readonly Dictionary<Type, List<HubEventDisposable>> _actions = new();
+    private readonly Dictionary<Type, HashSet<HubEventDisposable>> _actions = new();
 
     public IHubEventDisposable Register<T>(Action<T> cb) where T : IHubEvent
     {
-      if (cb == null)
-      {
-        throw new ArgumentNullException($"{nameof(cb)} cannot be null");
-      }
+      _ = cb ?? throw new ArgumentNullException($"{nameof(cb)} cannot be null");
 
       HubEventDisposable handler = new(cb, Remove);
 
       Type type = typeof(Action<T>);
-      if (_actions.TryGetValue(type, out List<HubEventDisposable> handlers))
+      if (_actions.TryGetValue(type, out HashSet<HubEventDisposable> handlers))
       {
         handlers.Add(handler);
       }
       else
       {
-        _actions[type] = new List<HubEventDisposable>
+        _actions[type] = new HashSet<HubEventDisposable>
         {
           handler
         };
@@ -35,7 +32,7 @@ namespace BluToolbox
 
     public void Call<T>(T hubEvent) where T : IHubEvent
     {
-      if (_actions.TryGetValue(typeof(Action<T>), out List<HubEventDisposable> handlers))
+      if (_actions.TryGetValue(typeof(Action<T>), out HashSet<HubEventDisposable> handlers))
       {
         foreach (HubEventDisposable handler in handlers.ToList())
         {
@@ -44,10 +41,28 @@ namespace BluToolbox
       }
     }
 
+    public void Dispose()
+    {
+      foreach (HashSet<HubEventDisposable> handlers in _actions.Values)
+      {
+        foreach (HubEventDisposable handler in handlers)
+        {
+          handler.Dispose();
+        }
+      }
+
+      _actions.Clear();
+    }
+
+    public void OnHardReload()
+    {
+      Dispose();
+    }
+
     private void Remove(HubEventDisposable handler)
     {
       Type type = handler.Callback.GetType();
-      if (_actions.TryGetValue(type, out List<HubEventDisposable> handlers))
+      if (_actions.TryGetValue(type, out HashSet<HubEventDisposable> handlers))
       {
         handlers.Remove(handler);
       }
