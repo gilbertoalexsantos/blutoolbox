@@ -4,7 +4,7 @@ namespace BluToolbox
 {
   public class PausableGameLoop : IGameLoop, IGameLoopListener
   {
-    private readonly DisposableManager<IGameLoopListener> _disposableManager = new();
+    private readonly DisposableRegistry<IGameLoopListener> _disposableRegistry = new();
     private readonly IDisposable _gameLoopDisposable;
 
     private bool _paused;
@@ -17,7 +17,7 @@ namespace BluToolbox
     public void Dispose()
     {
       _gameLoopDisposable.Dispose();
-      _disposableManager.Dispose();
+      _disposableRegistry.Dispose();
     }
 
     public void TogglePause()
@@ -27,7 +27,7 @@ namespace BluToolbox
 
     public IDisposable Register(IGameLoopListener listener)
     {
-      return _disposableManager.Register(listener);
+      return _disposableRegistry.Register(listener);
     }
 
     public void OnUpdate(float deltaTime)
@@ -37,7 +37,7 @@ namespace BluToolbox
         return;
       }
 
-      foreach (IGameLoopListener handler in _disposableManager)
+      foreach (IGameLoopListener handler in _disposableRegistry)
       {
         handler.OnUpdate(deltaTime);
       }
@@ -50,7 +50,7 @@ namespace BluToolbox
         return;
       }
 
-      foreach (IGameLoopListener handler in _disposableManager)
+      foreach (IGameLoopListener handler in _disposableRegistry)
       {
         handler.OnLateUpdate(deltaTime);
       }
@@ -64,7 +64,7 @@ namespace BluToolbox
       }
 
 
-      foreach (IGameLoopListener handler in _disposableManager)
+      foreach (IGameLoopListener handler in _disposableRegistry)
       {
         handler.OnFixedUpdate(fixedDeltaTime);
       }

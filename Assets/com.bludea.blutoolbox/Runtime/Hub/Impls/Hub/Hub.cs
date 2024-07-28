@@ -5,7 +5,7 @@ namespace BluToolbox
 {
   public class Hub : IHub
   {
-    private readonly Dictionary<Type, DisposableManager<object>> _actions = new();
+    private readonly Dictionary<Type, DisposableRegistry<object>> _actions = new();
 
     public IDisposable Register<T>(Action<T> cb) where T : IHubEvent
     {
@@ -14,7 +14,7 @@ namespace BluToolbox
       Type type = typeof(Action<T>);
       if (_actions.ContainsKey(type) == false)
       {
-        _actions[type] = new DisposableManager<object>();
+        _actions[type] = new DisposableRegistry<object>();
       }
 
       return _actions[type].Register(cb);
@@ -22,7 +22,7 @@ namespace BluToolbox
 
     public void Call<T>(T hubEvent) where T : IHubEvent
     {
-      if (_actions.TryGetValue(typeof(Action<T>), out DisposableManager<object> disposableManager))
+      if (_actions.TryGetValue(typeof(Action<T>), out DisposableRegistry<object> disposableManager))
       {
         foreach (object obj in disposableManager)
         {
@@ -33,7 +33,7 @@ namespace BluToolbox
 
     public void Dispose()
     {
-      foreach (KeyValuePair<Type, DisposableManager<object>> pair in _actions)
+      foreach (KeyValuePair<Type, DisposableRegistry<object>> pair in _actions)
       {
         pair.Value.Dispose();
       }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace BluToolbox
 {
-  public class DisposableManager<T> : IEnumerable<T>, IDisposable
+  public class DisposableRegistry<T> : IEnumerable<T>, IDisposable
   {
     private readonly HashSet<DisposableHolder<T>> _holders = new();
 

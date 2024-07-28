@@ -5,11 +5,11 @@ namespace BluToolbox
 {
   public class UnityGizmoLoop : MonoBehaviour, IGizmoLoop
   {
-    private readonly DisposableManager<IGizmoLoopListener> _disposableManager = new();
+    private readonly DisposableRegistry<IGizmoLoopListener> _disposableRegistry = new();
 
     public void OnDrawGizmos()
     {
-      foreach (IGizmoLoopListener gizmoLoopListener in _disposableManager)
+      foreach (IGizmoLoopListener gizmoLoopListener in _disposableRegistry)
       {
         gizmoLoopListener.OnDrawGizmosEvent();
       }
@@ -17,7 +17,7 @@ namespace BluToolbox
 
     public IDisposable Register(IGizmoLoopListener listener)
     {
-      return _disposableManager.Register(listener);
+      return _disposableRegistry.Register(listener);
     }
   }
 }
