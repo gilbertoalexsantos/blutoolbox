@@ -2,8 +2,8 @@ namespace BluToolbox
 {
   public interface IGameLoopListener
   {
-    void OnUpdate();
-    void OnLateUpdate();
-    void OnFixedUpdate();
+    void OnUpdate(float deltaTime);
+    void OnLateUpdate(float deltaTime);
+    void OnFixedUpdate(float fixedDeltaTime);
   }
 }

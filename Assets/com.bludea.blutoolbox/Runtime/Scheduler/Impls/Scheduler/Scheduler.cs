@@ -5,22 +5,21 @@ namespace BluToolbox
 {
   public class Scheduler : IScheduler, IGameLoopListener
   {
-    private readonly IClock _clock;
-
     private readonly List<ISchedule> _schedules = new();
     private readonly IGameLoopHandlerDisposable _gameLoopHandlerDisposable;
-    private readonly IHardReloadDisposable _hardReloadDisposable;
 
-    public Scheduler(IClock clock, IGameLoop gameLoop)
+    private float _secondsPassed;
+    private int _frameCount;
+
+    public Scheduler(IGameLoop gameLoop)
     {
-      _clock = clock;
       _gameLoopHandlerDisposable = gameLoop.Register(this);
     }
 
-    public void OnUpdate()
+    public void OnUpdate(float deltaTime)
     {
-      float secondsSinceStartup = _clock.SecondsSinceStartup;
-      int frame = _clock.FrameCount;
+      _secondsPassed += deltaTime;
+      int frame = _frameCount;
       for (int i = _schedules.Count - 1; i >= 0; i--)
       {
         ISchedule schedule = _schedules[i];
@@ -30,9 +29,9 @@ namespace BluToolbox
           continue;
         }
 
-        while (!schedule.IsCancelled && !schedule.ShouldRemove && schedule.ShouldCall(secondsSinceStartup, frame))
+        while (!schedule.IsCancelled && !schedule.ShouldRemove && schedule.ShouldCall(_secondsPassed, frame))
         {
-          schedule.Call(secondsSinceStartup, frame);
+          schedule.Call(_secondsPassed, frame);
         }
 
         if (schedule.ShouldRemove)
@@ -40,33 +39,34 @@ namespace BluToolbox
           _schedules.RemoveAt(i);
         }
       }
+      _frameCount++;
     }
 
-    public void OnLateUpdate()
+    public void OnLateUpdate(float deltaTime)
     {
     }
 
-    public void OnFixedUpdate()
+    public void OnFixedUpdate(float deltaTime)
     {
     }
 
     public IDisposable Schedule(float delay, float seconds, Action callback)
     {
-      ScheduleSeconds scheduleSeconds = new(delay, seconds, repeat: true, _clock.SecondsSinceStartup, callback);
+      ScheduleSeconds scheduleSeconds = new(delay, seconds, repeat: true, _secondsPassed, callback);
       _schedules.Add(scheduleSeconds);
       return scheduleSeconds;
     }
 
     public IDisposable ScheduleOnce(float delay, Action callback)
     {
-      ScheduleSeconds scheduleSeconds = new(delay, seconds: 0f, repeat: false, _clock.SecondsSinceStartup, callback);
+      ScheduleSeconds scheduleSeconds = new(delay, seconds: 0f, repeat: false, _secondsPassed, callback);
       _schedules.Add(scheduleSeconds);
       return scheduleSeconds;
     }
 
     public IDisposable ScheduleEveryFrame(Action callback)
     {
-      ScheduleEveryFrame scheduleEveryFrame = new(_clock.FrameCount, callback);
+      ScheduleEveryFrame scheduleEveryFrame = new(_frameCount, callback);
       _schedules.Add(scheduleEveryFrame);
       return scheduleEveryFrame;
     }
@@ -74,13 +74,7 @@ namespace BluToolbox
     public void Dispose()
     {
       _schedules.Clear();
-      _hardReloadDisposable.Dispose();
       _gameLoopHandlerDisposable.Dispose();
-    }
-
-    public void OnHardReload()
-    {
-      _schedules.Clear();
     }
   }
 }

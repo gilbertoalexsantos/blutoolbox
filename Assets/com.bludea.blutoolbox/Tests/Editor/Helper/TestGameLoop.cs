@@ -47,32 +47,27 @@ namespace BluToolbox.Tests
       _listeners.Clear();
     }
 
-    public void OnHardReload()
-    {
-      Dispose();
-    }
-
-    public void Update()
+    public void Update(float deltaTime)
     {
       foreach (IGameLoopListener listener in _listeners)
       {
-        listener.OnUpdate();
+        listener.OnUpdate(deltaTime);
       }
     }
 
-    public void LateUpdate()
+    public void LateUpdate(float deltaTime)
     {
       foreach (IGameLoopListener listener in _listeners)
       {
-        listener.OnLateUpdate();
+        listener.OnLateUpdate(deltaTime);
       }
     }
 
-    public void FixedUpdate()
+    public void FixedUpdate(float deltaTime)
     {
       foreach (IGameLoopListener listener in _listeners)
       {
-        listener.OnFixedUpdate();
+        listener.OnFixedUpdate(deltaTime);
       }
     }
   }

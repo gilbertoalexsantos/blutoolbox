@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BluToolbox
@@ -6,11 +7,13 @@ namespace BluToolbox
   public class UnityGameLoop : MonoBehaviour, IGameLoop
   {
     private readonly HashSet<GameLoopHandlerDisposable> _handlers = new();
-    private IHardReloadDisposable _hardReloadDisposable;
 
-    public void Constructor(IHardReloadManager hardReloadManager)
+    public void Dispose()
     {
-      _hardReloadDisposable = hardReloadManager.Register(this);
+      foreach (GameLoopHandlerDisposable monoBehaviourEventHandlerDisposable in _handlers.ToList())
+      {
+        monoBehaviourEventHandlerDisposable.Dispose();
+      }
     }
 
     public IGameLoopHandlerDisposable Register(IGameLoopListener listener)
@@ -24,7 +27,7 @@ namespace BluToolbox
     {
       foreach (GameLoopHandlerDisposable handler in _handlers)
       {
-        handler.Obj.OnUpdate();
+        handler.Obj.OnUpdate(Time.deltaTime);
       }
     }
 
@@ -32,7 +35,7 @@ namespace BluToolbox
     {
       foreach (GameLoopHandlerDisposable handler in _handlers)
       {
-        handler.Obj.OnLateUpdate();
+        handler.Obj.OnLateUpdate(Time.deltaTime);
       }
     }
 
@@ -40,27 +43,13 @@ namespace BluToolbox
     {
       foreach (GameLoopHandlerDisposable handler in _handlers)
       {
-        handler.Obj.OnFixedUpdate();
+        handler.Obj.OnFixedUpdate(Time.fixedDeltaTime);
       }
     }
 
     private void Remove(GameLoopHandlerDisposable handler)
     {
       _handlers.Remove(handler);
-    }
-
-    public void OnHardReload()
-    {
-      Dispose();
-    }
-
-    public void Dispose()
-    {
-      foreach (GameLoopHandlerDisposable monoBehaviourEventHandlerDisposable in _handlers)
-      {
-        monoBehaviourEventHandlerDisposable.Dispose();
-      }
-      _hardReloadDisposable.Dispose();
     }
   }
 }

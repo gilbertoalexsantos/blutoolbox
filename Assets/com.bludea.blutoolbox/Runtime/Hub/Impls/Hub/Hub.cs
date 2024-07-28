@@ -54,11 +54,6 @@ namespace BluToolbox
       _actions.Clear();
     }
 
-    public void OnHardReload()
-    {
-      Dispose();
-    }
-
     private void Remove(HubEventDisposable handler)
     {
       Type type = handler.Callback.GetType();

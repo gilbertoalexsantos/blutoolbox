@@ -6,15 +6,13 @@ namespace BluToolbox.Tests
   public class SchedulerTest
   {
     private TestGameLoop _gameLoop;
-    private TestClock _clock;
     private Scheduler _scheduler;
 
     [SetUp]
     public void SetUp()
     {
       _gameLoop = new TestGameLoop();
-      _clock = new TestClock();
-      _scheduler = new Scheduler(_clock, _gameLoop);
+      _scheduler = new Scheduler(_gameLoop);
     }
 
     [Test]
@@ -83,10 +81,8 @@ namespace BluToolbox.Tests
     public void TestScheduleEveryFrame()
     {
       int value = 0;
-      int startFrame = _clock.FrameCount;
       _scheduler.ScheduleEveryFrame(() => { value++; });
-      WaitSeconds(1f);
-      int framesPassed = _clock.FrameCount - startFrame;
+      int framesPassed = WaitSeconds(1f);
       Assert.IsTrue(value == framesPassed || value == framesPassed - 1 || value == framesPassed + 1);
     }
 
@@ -94,13 +90,11 @@ namespace BluToolbox.Tests
     public void TestScheduleEveryFrameDispose()
     {
       int value = 0;
-      int startFrame = _clock.FrameCount;
       IDisposable schedule = _scheduler.ScheduleEveryFrame(() => { value++; });
-      WaitSeconds(1f);
-      int framesPassed = _clock.FrameCount - startFrame;
+      int framesPassed = WaitSeconds(1f);
       Assert.IsTrue(value == framesPassed || value == framesPassed - 1 || value == framesPassed + 1);
       schedule.Dispose();
-      WaitSeconds(1f);
+      framesPassed = WaitSeconds(1f);
       Assert.IsTrue(value == framesPassed || value == framesPassed - 1 || value == framesPassed + 1);
 
       int value2 = 0;
@@ -110,9 +104,9 @@ namespace BluToolbox.Tests
       Assert.AreEqual(0, value2);
     }
 
-    private void WaitSeconds(float seconds)
+    private int WaitSeconds(float seconds)
     {
-      TestHelper.WaitSeconds(seconds, _gameLoop, _clock);
+      return TestHelper.WaitSeconds(seconds, _gameLoop);
     }
   }
 }

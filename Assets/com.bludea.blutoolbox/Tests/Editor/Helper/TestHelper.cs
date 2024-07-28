@@ -2,16 +2,16 @@ namespace BluToolbox.Tests
 {
   public static class TestHelper
   {
-    public static void WaitSeconds(float seconds, TestGameLoop gameLoop, TestClock clock)
+    public static int WaitSeconds(float seconds, TestGameLoop gameLoop)
     {
+      int frameCount = 0;
       float deltaTime = 1f / 60f;
-      float start = clock.SecondsSinceStartup;
-      for (float time = start; time <= start + seconds; time += deltaTime)
+      for (float time = 0; time <= seconds; time += deltaTime)
       {
-        clock.SecondsSinceStartup += deltaTime;
-        clock.FrameCount++;
-        gameLoop.Update();
+        gameLoop.Update(deltaTime);
+        frameCount++;
       }
+      return frameCount;
     }
   }
 }

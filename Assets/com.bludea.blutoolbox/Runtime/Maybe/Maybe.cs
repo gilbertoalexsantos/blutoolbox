@@ -6,9 +6,8 @@ namespace BluToolbox
   public readonly struct Maybe<T> : IEquatable<Maybe<T>>, IComparable<Maybe<T>>
   {
     private readonly T _value;
-    private readonly bool _hasValue;
 
-    public bool HasValue => _hasValue;
+    public bool HasValue { get; }
 
     private T Value
     {
@@ -26,7 +25,7 @@ namespace BluToolbox
     internal Maybe(T value, bool hasValue)
     {
       _value = value;
-      _hasValue = hasValue;
+      HasValue = hasValue;
     }
 
     public bool TryGetValue(out T value)

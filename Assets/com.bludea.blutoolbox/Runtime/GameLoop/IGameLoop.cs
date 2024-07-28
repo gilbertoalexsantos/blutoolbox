@@ -2,7 +2,7 @@ using System;
 
 namespace BluToolbox
 {
-  public interface IGameLoop : IDisposable, IHardReload
+  public interface IGameLoop : IDisposable
   {
     IGameLoopHandlerDisposable Register(IGameLoopListener listener);
   }
