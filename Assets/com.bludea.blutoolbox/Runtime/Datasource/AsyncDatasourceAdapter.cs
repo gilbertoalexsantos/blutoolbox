@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BluToolbox
 {
@@ -11,9 +11,9 @@ namespace BluToolbox
       _datasource = datasource;
     }
 
-    public Task<T> LoadAsync()
+    public async Awaitable<T> LoadAsync()
     {
-      return Task.FromResult(_datasource.LoadSync());
+      return await _datasource.LoadSync().FromResult();
     }
   }
 }

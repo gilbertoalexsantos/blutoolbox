@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,20 +10,20 @@ namespace BluToolbox
     [SerializeField]
     private Button _btn;
 
-    private Either<Func<Task>, Action> _cb;
+    private Either<Func<Awaitable>, Action> _cb;
     private Maybe<CancellationToken> _maybeToken;
 
     public void SetOnClick(Action cb)
     {
-      _cb = cb.AsRight<Func<Task>, Action>();
+      _cb = cb.AsRight<Func<Awaitable>, Action>();
 
       _btn.onClick.RemoveAllListeners();
       _btn.onClick.AddListener(OnBtnClicked);
     }
 
-    public void SetOnClick(Func<Task> task, Maybe<CancellationToken> token)
+    public void SetOnClick(Func<Awaitable> task, Maybe<CancellationToken> token)
     {
-      _cb = task.AsLeft<Func<Task>, Action>();
+      _cb = task.AsLeft<Func<Awaitable>, Action>();
       _maybeToken = token;
 
       _btn.onClick.RemoveAllListeners();
@@ -45,9 +44,9 @@ namespace BluToolbox
         return;
       }
 
-      if (_cb.TryGetLeft(out Func<Task> task))
+      if (_cb.TryGetLeft(out Func<Awaitable> task))
       {
-        TaskHelper.FireAndForget(async () =>
+        AwaitableHelper.FireAndForget(async () =>
         {
           await task();
           source.Dispose();

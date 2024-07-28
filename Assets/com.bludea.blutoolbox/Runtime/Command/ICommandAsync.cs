@@ -1,14 +1,14 @@
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BluToolbox
 {
   public interface ICommandAsync
   {
-    Task Execute();
+    Awaitable Execute();
   }
 
   public interface ICommandAsync<T>
   {
-    Task<T> Execute();
+    Awaitable<T> Execute();
   }
 }

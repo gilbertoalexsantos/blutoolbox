@@ -10,13 +10,17 @@ public class Desafinado : MonoBehaviour
 
   public void Start()
   {
-    CancellationToken token = btn.CreateCancellationToken();
+    CancellationTokenSource tokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+      btn.CreateCancellationToken(),
+      source.Token
+    );
+
     btn.SetOnClick(async () =>
     {
       Debug.Log(Time.frameCount + " Start of click");
       await Awaitable.NextFrameAsync();
       Debug.Log(Time.frameCount + " End of click");
-    }, token);
+    }, tokenSource.Token);
   }
 
   public void Update()
