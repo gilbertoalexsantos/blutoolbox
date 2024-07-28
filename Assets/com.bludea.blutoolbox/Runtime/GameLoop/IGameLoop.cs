@@ -4,6 +4,6 @@ namespace BluToolbox
 {
   public interface IGameLoop : IDisposable
   {
-    IGameLoopHandlerDisposable Register(IGameLoopListener listener);
+    IDisposable Register(IGameLoopListener listener);
   }
 }

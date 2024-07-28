@@ -21,6 +21,12 @@ namespace BluToolbox
 
     public void Dispose()
     {
+      foreach (DisposableHolder<T> holder in _holders.ToList())
+      {
+        holder.Dispose();
+      }
+
+      _holders.Clear();
     }
 
     public IEnumerator<T> GetEnumerator()

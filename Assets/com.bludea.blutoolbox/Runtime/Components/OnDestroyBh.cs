@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-  public class OnDestroyBehaviour : MonoBehaviour
+  public class OnDestroyBh : MonoBehaviour
   {
     private readonly CancellationTokenSource _source = new();
 

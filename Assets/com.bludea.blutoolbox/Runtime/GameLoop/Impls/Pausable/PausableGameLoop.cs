@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BluToolbox
 {
   public class PausableGameLoop : IGameLoop, IGameLoopListener
   {
-    private readonly HashSet<GameLoopHandlerDisposable> _handlers = new();
+    private readonly DisposableManager<IGameLoopListener> _disposableManager = new();
     private readonly IDisposable _gameLoopDisposable;
 
     private bool _paused;
@@ -19,12 +17,7 @@ namespace BluToolbox
     public void Dispose()
     {
       _gameLoopDisposable.Dispose();
-
-      foreach (GameLoopHandlerDisposable disposable in _handlers.ToList())
-      {
-        disposable.Dispose();
-      }
-      _handlers.Clear();
+      _disposableManager.Dispose();
     }
 
     public void TogglePause()
@@ -32,16 +25,9 @@ namespace BluToolbox
       _paused = !_paused;
     }
 
-    public IGameLoopHandlerDisposable Register(IGameLoopListener listener)
+    public IDisposable Register(IGameLoopListener listener)
     {
-      GameLoopHandlerDisposable disposable = new(listener, Remove);
-      _handlers.Add(disposable);
-      return disposable;
-    }
-
-    private void Remove(GameLoopHandlerDisposable handler)
-    {
-      _handlers.Remove(handler);
+      return _disposableManager.Register(listener);
     }
 
     public void OnUpdate(float deltaTime)
@@ -51,9 +37,9 @@ namespace BluToolbox
         return;
       }
 
-      foreach (GameLoopHandlerDisposable handler in _handlers)
+      foreach (IGameLoopListener handler in _disposableManager)
       {
-        handler.Obj.OnUpdate(deltaTime);
+        handler.OnUpdate(deltaTime);
       }
     }
 
@@ -64,9 +50,9 @@ namespace BluToolbox
         return;
       }
 
-      foreach (GameLoopHandlerDisposable handler in _handlers)
+      foreach (IGameLoopListener handler in _disposableManager)
       {
-        handler.Obj.OnLateUpdate(deltaTime);
+        handler.OnLateUpdate(deltaTime);
       }
     }
 
@@ -77,9 +63,10 @@ namespace BluToolbox
         return;
       }
 
-      foreach (GameLoopHandlerDisposable handler in _handlers)
+
+      foreach (IGameLoopListener handler in _disposableManager)
       {
-        handler.Obj.OnFixedUpdate(fixedDeltaTime);
+        handler.OnFixedUpdate(fixedDeltaTime);
       }
     }
   }

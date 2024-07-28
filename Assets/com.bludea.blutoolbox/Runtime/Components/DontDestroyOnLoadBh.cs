@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-  public class DontDestroyOnLoad : MonoBehaviour
+  public class DontDestroyOnLoadBh : MonoBehaviour
   {
     private void Awake()
     {

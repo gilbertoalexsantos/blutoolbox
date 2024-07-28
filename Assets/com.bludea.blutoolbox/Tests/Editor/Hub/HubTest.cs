@@ -27,7 +27,7 @@ namespace BluToolbox.Tests
     public void TestRegisterWithSuccess()
     {
       Action<TestEvent> action = _ => { };
-      IHubEventDisposable disposable = _hub.Register(action);
+      IDisposable disposable = _hub.Register(action);
       Assert.IsNotNull(disposable);
     }
 
@@ -105,7 +105,7 @@ namespace BluToolbox.Tests
       {
         actionCalled = true;
       };
-      IHubEventDisposable disposable = _hub.Register(action);
+      IDisposable disposable = _hub.Register(action);
       disposable.Dispose();
       _hub.Call(new TestEvent(5));
       Assert.IsFalse(actionCalled);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-  public abstract class BluBehaviour : MonoBehaviour
+  public abstract class BluBh : MonoBehaviour
   {
     private readonly Dictionary<Type, object> _cachedComponents = new();
 

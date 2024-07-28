@@ -6,7 +6,7 @@ namespace BluToolbox
   public class Scheduler : IScheduler, IGameLoopListener
   {
     private readonly List<ISchedule> _schedules = new();
-    private readonly IGameLoopHandlerDisposable _gameLoopHandlerDisposable;
+    private readonly IDisposable _gameLoopHandlerDisposable;
 
     private float _secondsPassed;
     private int _frameCount;

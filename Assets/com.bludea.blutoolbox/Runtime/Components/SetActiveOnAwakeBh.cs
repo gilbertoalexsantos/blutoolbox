@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-  public class SetActiveOnAwake : MonoBehaviour
+  public class SetActiveOnAwakeBh : MonoBehaviour
   {
     [SerializeField]
     private bool _setActive;

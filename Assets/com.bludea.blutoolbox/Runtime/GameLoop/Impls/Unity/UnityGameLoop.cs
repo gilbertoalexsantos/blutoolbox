@@ -1,55 +1,44 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using UnityEngine;
 
 namespace BluToolbox
 {
   public class UnityGameLoop : MonoBehaviour, IGameLoop
   {
-    private readonly HashSet<GameLoopHandlerDisposable> _handlers = new();
+    private readonly DisposableManager<IGameLoopListener> _disposableManager = new();
 
     public void Dispose()
     {
-      foreach (GameLoopHandlerDisposable monoBehaviourEventHandlerDisposable in _handlers.ToList())
-      {
-        monoBehaviourEventHandlerDisposable.Dispose();
-      }
+      _disposableManager.Dispose();
     }
 
-    public IGameLoopHandlerDisposable Register(IGameLoopListener listener)
+    public IDisposable Register(IGameLoopListener listener)
     {
-      GameLoopHandlerDisposable disposable = new(listener, Remove);
-      _handlers.Add(disposable);
-      return disposable;
+      return _disposableManager.Register(listener);
     }
 
     private void Update()
     {
-      foreach (GameLoopHandlerDisposable handler in _handlers)
+      foreach (IGameLoopListener handler in _disposableManager)
       {
-        handler.Obj.OnUpdate(Time.deltaTime);
+        handler.OnUpdate(Time.deltaTime);
       }
     }
 
     private void LateUpdate()
     {
-      foreach (GameLoopHandlerDisposable handler in _handlers)
+      foreach (IGameLoopListener handler in _disposableManager)
       {
-        handler.Obj.OnLateUpdate(Time.deltaTime);
+        handler.OnLateUpdate(Time.deltaTime);
       }
     }
 
     private void FixedUpdate()
     {
-      foreach (GameLoopHandlerDisposable handler in _handlers)
+      foreach (IGameLoopListener handler in _disposableManager)
       {
-        handler.Obj.OnFixedUpdate(Time.fixedDeltaTime);
+        handler.OnFixedUpdate(Time.fixedDeltaTime);
       }
-    }
-
-    private void Remove(GameLoopHandlerDisposable handler)
-    {
-      _handlers.Remove(handler);
     }
   }
 }

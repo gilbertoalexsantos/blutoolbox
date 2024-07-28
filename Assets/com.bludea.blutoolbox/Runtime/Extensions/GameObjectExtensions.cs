@@ -28,7 +28,7 @@ namespace BluToolbox
 
     public static CancellationToken CreateCancellationToken(this GameObject obj)
     {
-      return obj.GetOrAddComponent<OnDestroyBehaviour>().Token;
+      return obj.GetOrAddComponent<OnDestroyBh>().Token;
     }
   }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Desafinado : MonoBehaviour
 {
-  public BluButton btn;
+  public BluButtonBh btn;
 
   private readonly CancellationTokenSource source = new();
 

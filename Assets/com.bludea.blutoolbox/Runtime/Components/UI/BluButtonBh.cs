@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace BluToolbox
 {
-  public class BluButton : BluBehaviour
+  public class BluButtonBh : BluBh
   {
     [SerializeField]
     private Button _btn;
@@ -21,10 +21,10 @@ namespace BluToolbox
       _btn.onClick.AddListener(OnBtnClicked);
     }
 
-    public void SetOnClick(Func<Awaitable> task, Maybe<CancellationToken> token)
+    public void SetOnClick(Func<Awaitable> task, CancellationToken cancellationToken = default)
     {
       _cb = task.AsLeft<Func<Awaitable>, Action>();
-      _maybeToken = token;
+      _maybeToken = cancellationToken;
 
       _btn.onClick.RemoveAllListeners();
       _btn.onClick.AddListener(OnBtnClicked);
@@ -61,7 +61,7 @@ namespace BluToolbox
 
     private CancellationTokenSource CreateCancelTokenSource()
     {
-      CancellationToken token1 = gameObject.GetOrAddComponent<OnDestroyBehaviour>().Token;
+      CancellationToken token1 = gameObject.GetOrAddComponent<OnDestroyBh>().Token;
       CancellationToken token2 = _maybeToken.TryGetValue(out CancellationToken v) ? v : CancellationToken.None;
       return CancellationTokenSource.CreateLinkedTokenSource(token1, token2);
     }
