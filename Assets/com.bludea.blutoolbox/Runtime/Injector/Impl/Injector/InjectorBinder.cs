@@ -59,6 +59,32 @@ namespace BluToolbox.Injector
       return (T) Resolve(typeof(T));
     }
 
+    public T Create<T>()
+    {
+      return (T) CreateInstance(typeof(T));
+    }
+
+    public T Inject<T>(T obj)
+    {
+      MethodInfo injectMethod = obj.GetType().GetMethods()
+        .FirstOrDefault(m => m.GetCustomAttribute<Inject>() != null);
+      if (injectMethod == null)
+      {
+        throw new InjectorException("No inject method found for type");
+      }
+
+      ParameterInfo[] parameters = injectMethod.GetParameters();
+      object[] parameterInstances = new object[parameters.Length];
+      for (int i = 0; i < parameters.Length; i++)
+      {
+        parameterInstances[i] = Resolve(parameters[i].ParameterType);
+      }
+
+      injectMethod.Invoke(obj, parameterInstances);
+
+      return obj;
+    }
+
     public void AsValue<T>(T value)
     {
       if (!_currentBindType.TryGetValue(out Type currentBindType))

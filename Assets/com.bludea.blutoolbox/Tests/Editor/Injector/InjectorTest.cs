@@ -47,6 +47,17 @@ namespace BluToolbox.Tests
     {
     }
 
+    private class MyClassWithInjectMethod
+    {
+      public MyClass Dependency { get; private set; }
+
+      [Inject]
+      public void InjectDependency(MyClass dependency)
+      {
+        Dependency = dependency;
+      }
+    }
+
     [Test]
     public void TestResolveSimpleBinding()
     {
@@ -163,6 +174,40 @@ namespace BluToolbox.Tests
       MyClassWithDependency instance2 = binder.Resolve<MyClassWithDependency>();
       Assert.AreNotSame(instance1, instance2);
       Assert.AreSame(instance1.Dependency, instance2.Dependency);
+    }
+
+    [Test]
+    public void TestInjectMethod()
+    {
+      InjectorBinder binder = new();
+      binder.Bind<MyClass>().AsTransient();
+      MyClassWithInjectMethod obj = new();
+      binder.Inject(obj);
+      Assert.IsNotNull(obj.Dependency);
+      Assert.IsInstanceOf<MyClass>(obj.Dependency);
+    }
+
+    [Test]
+    public void TestInjectMethodThrowsIfNoInjectMethod()
+    {
+      InjectorBinder binder = new();
+      MyClass obj = new();
+      Assert.Throws<InjectorException>(() => binder.Inject(obj), "No inject method found for type");
+    }
+
+    [Test]
+    public void TestInjectMethodWithMultipleParameters()
+    {
+      InjectorBinder binder = new();
+      binder.Bind<MyClass>().AsTransient();
+      binder.Bind<MyClassWithDependency>().AsTransient();
+
+      var obj = new MyClassWithInjectMethod();
+
+      binder.Inject(obj);
+
+      Assert.IsNotNull(obj.Dependency);
+      Assert.IsInstanceOf<MyClass>(obj.Dependency);
     }
   }
 }

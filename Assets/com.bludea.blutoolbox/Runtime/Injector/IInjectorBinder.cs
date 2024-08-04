@@ -10,5 +10,7 @@ namespace BluToolbox.Injector
     void AsTransient();
 
     T Resolve<T>();
+    T Create<T>();
+    T Inject<T>(T obj);
   }
 }
