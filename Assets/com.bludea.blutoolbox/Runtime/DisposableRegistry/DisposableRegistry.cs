@@ -31,7 +31,7 @@ namespace BluToolbox
 
     public IEnumerator<T> GetEnumerator()
     {
-      return _holders.Select(holder => holder.Obj).GetEnumerator();
+      return _holders.ToList().Select(holder => holder.Obj).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

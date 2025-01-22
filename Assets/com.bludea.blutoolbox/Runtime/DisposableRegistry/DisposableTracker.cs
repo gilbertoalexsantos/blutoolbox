@@ -7,14 +7,12 @@ namespace BluToolbox
   {
     private readonly HashSet<IDisposable> _disposables = new();
 
-    public void Add(IDisposable disposable)
+    public void Register(params IDisposable[] disposables)
     {
-      _disposables.Add(disposable);
-    }
-
-    public void Remove(IDisposable disposable)
-    {
-      _disposables.Remove(disposable);
+      foreach (IDisposable disposable in disposables)
+      {
+        _disposables.Add(disposable);
+      }
     }
 
     public void Dispose()

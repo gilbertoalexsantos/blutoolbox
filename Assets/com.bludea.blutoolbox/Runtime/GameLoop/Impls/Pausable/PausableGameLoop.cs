@@ -63,7 +63,6 @@ namespace BluToolbox
         return;
       }
 
-
       foreach (IGameLoopListener handler in _disposableRegistry)
       {
         handler.OnFixedUpdate(fixedDeltaTime);
