@@ -14,6 +14,7 @@
 
 # Rider
 .idea/
+*.DotSettings.user
 ProjectSettings/RiderScriptEditorPersistedState.asset
 
 
