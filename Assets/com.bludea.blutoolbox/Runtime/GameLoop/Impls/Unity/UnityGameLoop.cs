@@ -5,7 +5,7 @@ namespace BluToolbox
 {
   public class UnityGameLoop : MonoBehaviour, IGameLoop
   {
-    private readonly DisposableRegistry<IGameLoopListener> _disposableRegistry = new();
+    private readonly DisposableRegistry _disposableRegistry = new();
 
     public void Dispose()
     {
@@ -19,7 +19,7 @@ namespace BluToolbox
 
     private void Update()
     {
-      foreach (IGameLoopListener handler in _disposableRegistry)
+      foreach (IUpdateListener handler in _disposableRegistry.Enumerate<IUpdateListener>())
       {
         handler.OnUpdate(Time.deltaTime);
       }
@@ -27,7 +27,7 @@ namespace BluToolbox
 
     private void LateUpdate()
     {
-      foreach (IGameLoopListener handler in _disposableRegistry)
+      foreach (ILateUpdateListener handler in _disposableRegistry.Enumerate<ILateUpdateListener>())
       {
         handler.OnLateUpdate(Time.deltaTime);
       }
@@ -35,7 +35,7 @@ namespace BluToolbox
 
     private void FixedUpdate()
     {
-      foreach (IGameLoopListener handler in _disposableRegistry)
+      foreach (IFixedUpdateListener handler in _disposableRegistry.Enumerate<IFixedUpdateListener>())
       {
         handler.OnFixedUpdate(Time.fixedDeltaTime);
       }

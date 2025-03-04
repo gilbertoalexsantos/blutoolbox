@@ -1,17 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BluToolbox
 {
-  public class DisposableRegistry<T> : IEnumerable<T>, IDisposable
+  public class DisposableRegistry : IDisposable
   {
-    private readonly HashSet<DisposableHolder<T>> _holders = new();
+    private readonly List<DisposableHolder> _holders = new();
 
-    public IDisposable Register(T obj)
+    public IDisposable Register(object obj)
     {
-      DisposableHolder<T> holder = new(obj, toRemove =>
+      DisposableHolder holder = new(obj, toRemove =>
       {
         _holders.Remove(toRemove);
       });
@@ -21,7 +20,7 @@ namespace BluToolbox
 
     public void Dispose()
     {
-      foreach (DisposableHolder<T> holder in _holders.ToList())
+      foreach (DisposableHolder holder in _holders.ToList())
       {
         holder.Dispose();
       }
@@ -29,14 +28,9 @@ namespace BluToolbox
       _holders.Clear();
     }
 
-    public IEnumerator<T> GetEnumerator()
+    public IEnumerable<T> Enumerate<T>()
     {
-      return _holders.ToList().Select(holder => holder.Obj).GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
+      return new FilteredEnumerable<T>(_holders);
     }
   }
 }

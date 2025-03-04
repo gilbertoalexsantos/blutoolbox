@@ -2,13 +2,13 @@ using System;
 
 namespace BluToolbox
 {
-  public class DisposableHolder<T> : IDisposable
+  public class DisposableHolder : IDisposable
   {
-    private readonly Action<DisposableHolder<T>> _onDispose;
+    private readonly Action<DisposableHolder> _onDispose;
 
-    public T Obj { get; }
+    public object Obj { get; }
 
-    public DisposableHolder(T obj, Action<DisposableHolder<T>> onDispose)
+    public DisposableHolder(object obj, Action<DisposableHolder> onDispose)
     {
       Obj = obj;
       _onDispose = onDispose;

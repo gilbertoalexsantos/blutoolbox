@@ -2,9 +2,9 @@ using System;
 
 namespace BluToolbox
 {
-  public class PausableGameLoop : IGameLoop, IGameLoopListener
+  public class PausableGameLoop : IGameLoop, IUpdateListener, ILateUpdateListener, IFixedUpdateListener
   {
-    private readonly DisposableRegistry<IGameLoopListener> _disposableRegistry = new();
+    private readonly DisposableRegistry _disposableRegistry = new();
     private readonly IDisposable _gameLoopDisposable;
 
     private bool _paused;
@@ -37,7 +37,7 @@ namespace BluToolbox
         return;
       }
 
-      foreach (IGameLoopListener handler in _disposableRegistry)
+      foreach (IUpdateListener handler in _disposableRegistry.Enumerate<IUpdateListener>())
       {
         handler.OnUpdate(deltaTime);
       }
@@ -50,7 +50,7 @@ namespace BluToolbox
         return;
       }
 
-      foreach (IGameLoopListener handler in _disposableRegistry)
+      foreach (ILateUpdateListener handler in _disposableRegistry.Enumerate<ILateUpdateListener>())
       {
         handler.OnLateUpdate(deltaTime);
       }
@@ -63,7 +63,7 @@ namespace BluToolbox
         return;
       }
 
-      foreach (IGameLoopListener handler in _disposableRegistry)
+      foreach (IFixedUpdateListener handler in _disposableRegistry.Enumerate<IFixedUpdateListener>())
       {
         handler.OnFixedUpdate(fixedDeltaTime);
       }

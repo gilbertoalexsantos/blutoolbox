@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BluToolbox
 {
-  public class Scheduler : IScheduler, IGameLoopListener
+  public class Scheduler : IScheduler, IUpdateListener
   {
     private readonly List<ISchedule> _schedules = new();
     private readonly IDisposable _gameLoopHandlerDisposable;
@@ -40,14 +40,6 @@ namespace BluToolbox
         }
       }
       _frameCount++;
-    }
-
-    public void OnLateUpdate(float deltaTime)
-    {
-    }
-
-    public void OnFixedUpdate(float deltaTime)
-    {
     }
 
     public IDisposable Schedule(float delay, float seconds, Action callback)

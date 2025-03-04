@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BluToolbox
@@ -19,6 +20,16 @@ namespace BluToolbox
     {
       while (!condition())
         await Awaitable.EndOfFrameAsync(cancellationToken);
+    }
+
+    public static async Task AsTask(this Awaitable a)
+    {
+      await a;
+    }
+
+    public static async Task<T> AsTask<T>(this Awaitable<T> a)
+    {
+      return await a;
     }
   }
 }

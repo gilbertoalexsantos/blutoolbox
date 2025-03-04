@@ -58,6 +58,18 @@ namespace BluToolbox.Tests
       }
     }
 
+    private interface IInterface1
+    {
+    }
+
+    private interface IInterface2
+    {
+    }
+
+    private class MyClassWithTwoInterfaces : IInterface1, IInterface2
+    {
+    }
+
     [Test]
     public void TestResolveSimpleBinding()
     {
@@ -108,6 +120,16 @@ namespace BluToolbox.Tests
       binder.Bind<MyClass>().AsValue(myClass);
       MyClass resolvedInstance = binder.Resolve<MyClass>();
       Assert.AreSame(myClass, resolvedInstance);
+    }
+
+    [Test]
+    public void TestAsValueDifferentType()
+    {
+      InjectorBinder binder = new();
+      MyImplementation impl = new();
+      binder.Bind<IMyInterface>().AsValue(impl);
+      IMyInterface resolvedInstance = binder.Resolve<IMyInterface>();
+      Assert.AreSame(impl, resolvedInstance);
     }
 
     [Test]
@@ -188,14 +210,6 @@ namespace BluToolbox.Tests
     }
 
     [Test]
-    public void TestInjectMethodThrowsIfNoInjectMethod()
-    {
-      InjectorBinder binder = new();
-      MyClass obj = new();
-      Assert.Throws<InjectorException>(() => binder.Inject(obj), "No inject method found for type");
-    }
-
-    [Test]
     public void TestInjectMethodWithMultipleParameters()
     {
       InjectorBinder binder = new();
@@ -208,6 +222,18 @@ namespace BluToolbox.Tests
 
       Assert.IsNotNull(obj.Dependency);
       Assert.IsInstanceOf<MyClass>(obj.Dependency);
+    }
+
+    [Test]
+    public void TestInjectTwoInterfacesToSameSingleton()
+    {
+      InjectorBinder binder = new();
+      binder.Bind<IInterface1>().To<MyClassWithTwoInterfaces>().AsSingleton();
+      binder.Bind<IInterface2>().To<MyClassWithTwoInterfaces>().AsSingleton();
+
+      var obj1 = binder.Resolve<IInterface1>();
+      var obj2 = binder.Resolve<IInterface2>();
+      Assert.AreSame(obj1, obj2);
     }
   }
 }

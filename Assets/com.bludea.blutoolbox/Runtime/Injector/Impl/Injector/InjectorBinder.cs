@@ -10,12 +10,12 @@ namespace BluToolbox.Injector
     private class Binding
     {
       public Type BindType;
-      public object Value;
       public bool IsSingleton;
     }
 
     private readonly Dictionary<Type, Binding> _bindings = new();
     private readonly HashSet<Type> resolvingTypes = new();
+    private readonly Dictionary<Type, object> _singletonInstances = new();
     private Maybe<Type> _currentBindType;
 
     public IInjectorBinder Bind<T>()
@@ -66,21 +66,33 @@ namespace BluToolbox.Injector
 
     public T Inject<T>(T obj)
     {
-      MethodInfo injectMethod = obj.GetType().GetMethods()
-        .FirstOrDefault(m => m.GetCustomAttribute<Inject>() != null);
-      if (injectMethod == null)
+      Type type = obj.GetType();
+      BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+
+      var injectMethods = type.GetMethods(flags)
+        .Where(m => m.GetCustomAttribute<Inject>() != null);
+      foreach (MethodInfo injectMethod in injectMethods)
       {
-        throw new InjectorException("No inject method found for type");
+        ParameterInfo[] parameters = injectMethod.GetParameters();
+        object[] parameterInstances = parameters.Select(p => Resolve(p.ParameterType)).ToArray();
+        injectMethod.Invoke(obj, parameterInstances);
       }
 
-      ParameterInfo[] parameters = injectMethod.GetParameters();
-      object[] parameterInstances = new object[parameters.Length];
-      for (int i = 0; i < parameters.Length; i++)
+      var injectFields = type.GetFields(flags)
+        .Where(f => f.GetCustomAttribute<Inject>() != null);
+      foreach (FieldInfo injectField in injectFields)
       {
-        parameterInstances[i] = Resolve(parameters[i].ParameterType);
+        object fieldValue = Resolve(injectField.FieldType);
+        injectField.SetValue(obj, fieldValue);
       }
 
-      injectMethod.Invoke(obj, parameterInstances);
+      var injectProperties = type.GetProperties(flags)
+        .Where(p => p.GetCustomAttribute<Inject>() != null && p.CanWrite);
+      foreach (PropertyInfo injectProperty in injectProperties)
+      {
+        object propertyValue = Resolve(injectProperty.PropertyType);
+        injectProperty.SetValue(obj, propertyValue);
+      }
 
       return obj;
     }
@@ -97,13 +109,13 @@ namespace BluToolbox.Injector
         throw new InjectorException($"No binding found for type {currentBindType.FullName}");
       }
 
-      if (binding.BindType != typeof(T))
+      if (!ReflectionUtils.ImplementsOrInherits(typeof(T), binding.BindType))
       {
         throw new InjectorException(
           $"Cannot bind value of type {typeof(T).FullName} to type {currentBindType.FullName}");
       }
 
-      binding.Value = value;
+      _singletonInstances[binding.BindType] = value;
       binding.IsSingleton = true;
 
       _currentBindType = Maybe.None<Type>();
@@ -155,9 +167,9 @@ namespace BluToolbox.Injector
         throw new InjectorException($"No binding found for type {targetType.FullName}");
       }
 
-      if (binding.IsSingleton && binding.Value != null)
+      if (binding.IsSingleton && _singletonInstances.TryGetValue(binding.BindType, out object value))
       {
-        return binding.Value;
+        return value;
       }
 
       resolvingTypes.Add(targetType);
@@ -166,7 +178,7 @@ namespace BluToolbox.Injector
 
       if (binding.IsSingleton)
       {
-        binding.Value = instance;
+        _singletonInstances[binding.BindType] = instance;
       }
 
       return instance;
@@ -183,7 +195,7 @@ namespace BluToolbox.Injector
         parameterInstances[i] = Resolve(parameters[i].ParameterType);
       }
 
-      return Activator.CreateInstance(type, parameterInstances);
+      return Inject(Activator.CreateInstance(type, parameterInstances));
     }
 
     private ConstructorInfo GetCreateInstanceConstructor(Type type)

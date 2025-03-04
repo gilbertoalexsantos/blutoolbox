@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BluToolbox
 {
-  public class UnityLogger : ILogger
+  public class UnityLogger : ILoggerService
   {
     private LogType _enabledLogs;
 

@@ -4,7 +4,7 @@ namespace BluToolbox.Tests
 {
   public class TestGameLoop : IGameLoop
   {
-    private readonly DisposableRegistry<IGameLoopListener> _disposableRegistry = new();
+    private readonly DisposableRegistry _disposableRegistry = new();
 
     public IDisposable Register(IGameLoopListener listener)
     {
@@ -18,7 +18,7 @@ namespace BluToolbox.Tests
 
     public void Update(float deltaTime)
     {
-      foreach (IGameLoopListener listener in _disposableRegistry)
+      foreach (IUpdateListener listener in _disposableRegistry.Enumerate<IUpdateListener>())
       {
         listener.OnUpdate(deltaTime);
       }
@@ -26,7 +26,7 @@ namespace BluToolbox.Tests
 
     public void LateUpdate(float deltaTime)
     {
-      foreach (IGameLoopListener listener in _disposableRegistry)
+      foreach (ILateUpdateListener listener in _disposableRegistry.Enumerate<ILateUpdateListener>())
       {
         listener.OnLateUpdate(deltaTime);
       }
@@ -34,7 +34,7 @@ namespace BluToolbox.Tests
 
     public void FixedUpdate(float deltaTime)
     {
-      foreach (IGameLoopListener listener in _disposableRegistry)
+      foreach (IFixedUpdateListener listener in _disposableRegistry.Enumerate<IFixedUpdateListener>())
       {
         listener.OnFixedUpdate(deltaTime);
       }
